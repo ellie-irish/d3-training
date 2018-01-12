@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>Viz 1</title>
+    </head>
+
+    <body>
+        <div style="color:lightblue" id="description_1">
+1.Create an HTML file containing a blue rectangle that is 100 pixels in width and 20 pixels in height.
+        </div>
+        <br>
+   		<div style="color:orange">
+2. Underneath the blue rectangle, create 3 orange circles next to each other, each with a 2px thick blue border. Each circle should have double the radius of the previous one.
+		</div>
+		<br>
+		<div style="color:purple">
+3. Underneath the circles, create an octagon.
+		</div>
+        <br>
+        <div id="viz">
+        </div>
+
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+        	var svg = d3.select("#viz")
+            .append('svg')
+            .attr('height', 500)
+            .attr('width', 2000);
+
+            svg.append('rect')
+            .attr("x", 200)
+            .attr("y", 0)
+            .attr("width", 100)
+            .attr("height", 20)
+            .style('fill', 'lightblue');
+
+        	var cx = 100;
+            var cy = 100;
+            var r = 20;
+            for(i=0; i<3; i++){
+                svg.append('circle').attr('cx', cx).attr('cy', cy).attr('r', r);
+                cx = cx*2;
+                r = r*2;
+            }
+			d3.selectAll('circle').style('fill', 'orange').style('stroke', 'blue').style('stroke-width', '2');
+            
+            svg.append('polygon')
+            .attr('points', '200,180 300,180 350,240 350,340 300,400 200,400 150,340 150,240')
+            .style('fill', 'purple');
+        </script>
+
+    </body>
+</html>
