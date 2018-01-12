@@ -29,8 +29,12 @@
             Viz3
                 .enter()
                 .append('circle')
-                .attr('cx', 100)
-                .attr('cy', 500)
+                .attr('cx', function(d) {
+                    return Math.random()*1000;
+                    })
+                .attr('cy', function(d) {
+                    return Math.random()*1000;
+                    })
                 .attr('r', function(d) {
                         return d.size;
                     })
