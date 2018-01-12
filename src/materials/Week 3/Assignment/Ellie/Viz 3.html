@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <title>Viz 3</title>
+    </head>
+
+    <body>
+        <div id="svghere">
+        </div>
+        
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+        var svg = d3.select("#svghere")
+            .append('svg')
+            .attr('height', 2000)
+            .attr('width', 2000);
+
+
+            d3.json("data.json", function(data) {
+                console.log(data);
+                animate(data);
+            });
+
+        function updateViz(data) {
+            
+            var Viz3 = svg
+                .selectAll('circle')
+                .data(data);
+
+            Viz3
+                .enter()
+                .append('circle')
+                .attr('cx', 100)
+                .attr('cy', 500)
+                .attr('r', function(d) {
+                        return d.size;
+                    })
+                .attr('fill', 'none')
+                .style('stroke', function(d) {
+                    return d.color;
+                })
+                .style('stroke-width', 1);
+
+            Viz3
+                .exit()
+                .remove();
+
+            Viz3
+                .attr('r', function(d) {
+                        return d.size;
+                    })
+                .style('stroke', function(d) {
+                    return d.color;
+                    })
+                .style('stroke-width', 1);
+        }
+
+        function animate(data) {
+
+            updateViz(data);
+
+            var loop = setInterval(function() { 
+                if (data.length === 0) { clearInterval(loop); }
+                data.pop();
+                updateViz(data);
+            }, 2000);
+        }
+        </script>
+    </body>
+</html>
