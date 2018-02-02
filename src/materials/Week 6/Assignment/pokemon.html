@@ -1,0 +1,187 @@
+<html>
+
+    <head>
+        <title>Part 2</title>
+
+    </head>
+
+    <body>
+    	<div>
+1. Use `pokemon.json` to calculate the following items:
+        </div>
+        <br>
+        <div>
+    - Calculate the average weight (lbs) and height (in inches) of the pokemon. Note you will have to convert the units to lbs and inches. 
+        </div>
+        <br>
+        <div>
+    - What is the total egg distance (value on egg property) for all pokemon who have a weakness of 'Psychic'. 'Weaknesses' is a property on each pokemon object that contains a list of strings. Note: some 'egg' properties say 'Not in Eggs'. consider this value a -1 in your summation.
+        </div>
+        <br>
+        <div>
+    - Determine which type of pokemon has the most weaknesses on average. List the types of pokemon and the number of their weaknesses in a list in descending order. Note: a pokemon can have more than one type. Because of this the same pokemon can be counted for more than one type. For example: the first object with id:1 would count as both 'Grass' and 'Poison' type.
+        </div>
+        <br>
+        <div>
+    - Break the pokemon down into 5 equal buckets of weight classes and then average the spawn_time (show in minutes) of each weight class
+    	</div>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+
+    d3.json('pokemon.json', function(error, data) {       
+        if (error) {
+            console.error('failed to read data');
+            return;
+        }
+        console.log('raw', data);
+
+
+// Calculate the average weight and height of all pokemon
+
+    data.forEach(function(d) {
+        var weightString = d.weight.split(' ');
+        d.weight = +weightString[0];
+    });
+
+    data.forEach(function(d) {
+        var heightString = d.height.split(' ');
+        d.height = +heightString[0];
+    });
+
+    // console.log('data with numeric height and weight', data)
+
+
+    var meanWeight = d3.mean(data, function(z) {
+        return z.weight;
+    });
+    
+    console.log('The average weight of all Pokemon (in kg):', meanWeight);
+
+    var meanHeight = d3.mean(data, function(z) {
+        return z.height;
+    });
+    
+    console.log('The average heigh of all Pokemon (in m):', meanHeight);
+
+
+
+
+// What is the total egg distance for all pokemon with psychic weakness. 
+
+    var psychic = [];
+            data.forEach(function(d){
+                if (d.weaknesses.indexOf('Psychic') > -1)
+                    return psychic.push(d);  
+            });
+    
+    console.log('Psychic list', psychic);
+
+    var newPsychic = psychic.map(function(d) {
+        if (d.egg === 'Not in Eggs') {
+            return -1;
+        }   else {
+                var eggString = d.egg.split(' ');
+                    return +eggString[0];
+        }});
+    
+    console.log('New Psychic list', newPsychic);
+
+    var egg = newPsychic.reduce(function(accumulator, currentValue) {
+                return accumulator + currentValue;
+            }, 0);
+    
+    console.log('Total egg distance for Pokemon with psychic weakness:', egg)
+
+
+
+
+// Determine which pokemon has the most weaknesses on average
+
+    var types = [];
+    data.forEach(function(d) {
+        d.type.forEach(function(p) {
+            types.push(p)
+        })
+    });
+    // console.log(types)
+
+    Array.prototype.unique = function() {
+        return this.filter(function (value, index, self) { 
+            return self.indexOf(value) === index; // returns only those values that pass as 'true' given the callback function. 
+        });
+    }
+
+    var uniqueTypes = types.unique();
+    console.log('Unique types', uniqueTypes); //create list of unique types
+
+    data.forEach(function(d) {
+        d.weakness_count = +d.weaknesses.length
+    });
+
+    finalWeak = uniqueTypes.map(function(PokemonType) {
+        var filterTypes = data.filter(function(p) {
+            return p.type.indexOf(PokemonType) > -1; // filter by type
+        });
+        var typeMeans = d3.mean(filterTypes, function(d) {
+            return d.weakness_count;
+        });
+        return {PokemonType, typeMeans}; // return array with just Pokemon type and the average number of weaknesses
+    });
+    
+    finalWeak.sort(function(a,b) {
+        return b.typeMeans - a.typeMeans; // sort in descending order
+    });
+    
+    console.log(finalWeak);
+
+    finalWeak.forEach(function(d) {
+        console.log('The average number of weaknesses for ' + d.PokemonType +  ' type:', Math.round(d.typeMeans));
+    });
+
+
+
+
+// Break pokemon down into 5 weight classes and calculate average spawn time of each class
+
+    var parseTime = d3.timeParse('%M:%S'); // coerce spawn time to numeric
+
+    data.forEach(function(d) {
+        if (d.spawn_time === 'N/A') { // check to see if spawn time is missing
+            d.spawn_time = null; // if it is assign it to null to ignore data point
+        } else {
+            d.spawn_time = parseTime(d.spawn_time.toString());
+            d.spawn_time = d.spawn_time.getMinutes() + d.spawn_time.getSeconds()/60;
+        }
+    });
+    
+    // console.log(data);
+
+    var rangeWeight = d3.extent(data, function(d) {
+        return d.weight;
+    });
+
+    // console.log(rangeWeight);
+
+    var intervalsWeight = d3.scaleQuantize()
+        .domain(rangeWeight)
+        .range(['smallest', 'small', 'normal', 'large', 'largest']);
+
+    // console.log(intervalsWeight(300))
+
+    intervalsWeight.range().forEach(function(d) {
+        var classWeight = data.filter(function(p) {
+            return intervalsWeight(p.weight) === d;
+        });
+        var mean = d3.mean(classWeight, function(z) {
+            return z.spawn_time;
+        });
+        console.log('The average spawn-time for the ' + d + " weight class:", mean.toFixed(2));
+    });
+
+        });
+        </script>
+
+    </body>
+
+</html>
