@@ -1,0 +1,105 @@
+<html>
+
+    <head>
+        <title>Part 1</title>
+
+    </head>
+
+    <body>
+    	<div>
+    1. Use the cars.json file to calculate the following list of counts:
+        </div>
+        <br>
+        <div>
+    - How many makes are considered common (where property make_is_common is 1)
+        </div>
+        <br>
+        <div>
+    - How many makes are there per country.
+        </div>
+        <br>
+        <div>
+    - How many makes are there by country and broken down by common and uncommon
+    	</div>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+
+    d3.json('cars.json', function(error, data) {       
+        if (error) {
+            console.error('failed to read data');
+            return;
+        }
+        console.log('raw', data);
+
+        // How many makes are considered common (where property make_is_common is 1)
+
+        // var car = [];
+        // data.forEach(function(d){
+        //     car.push(d.make_is_common)
+        // });
+        // console.log(car); // list of make_is_common values
+
+        data.forEach(function(d) {
+            d.make_is_common = +d.make_is_common;
+        });
+
+        var common = data.reduce(function(accumulator, currentValue) {
+            return accumulator + currentValue.make_is_common;
+        }, 0);
+        console.log('Number of makes that are common:', common)
+
+
+        //How many makes are there per country.
+
+        var country = [];
+        data.forEach(function(d){
+                return country.push(d.make_country); 
+        });
+
+        Array.prototype.unique = function() {
+            return this.filter(function (value, index, self) { 
+                return self.indexOf(value) === index; // returns only those values that pass as 'true' given the callback function. 
+            });
+        }
+
+        var unique = country.unique();
+        console.log('Unique countries', unique); //create list of unique countries
+
+        unique.forEach(function(d) {
+            var number = country.reduce(function(count, value) {
+                if(value === d)
+                    count++
+                return count;
+            }, 0);
+            console.log('Number of makes in ' + d + ":", number);
+        });
+
+
+        // How many makes are there by country and broken down by common and uncommon
+
+        unique.forEach(function(d) {
+            var commonMake = data.reduce(function(count, object) {
+                if(object.make_country === d && object.make_is_common === 1)
+                    count++
+                return count;
+            }, 0);
+            console.log('Number of common makes in ' + d + ":", commonMake);
+        });
+
+        unique.forEach(function(d) {
+            var uncommonMake = data.reduce(function(count, object) {
+                if(object.make_country === d && object.make_is_common === 0)
+                    count++
+                return count;
+            }, 0);
+            console.log('Number of uncommon makes in ' + d + ":", uncommonMake);
+        });
+
+    });
+
+        </script>
+
+    </body>
+
+</html>
