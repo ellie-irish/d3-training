@@ -29,11 +29,14 @@
     	</div>
         <br>
         <br>
-        <form id="form">
-            <input type = "radio" name = 'stack' value="sortStates">Sort states alphabetically</option>
-            <input type = "radio" name = 'stack' value="emissionsHigh">Sort emissions low to high</option>
-            <input type = "radio" name = 'stack' value="emissionsLow">Sort emissions high to low</option>
-        </form>
+        <div id = 'radiobuttons'>
+        <label>
+            <input type = "radio" name = 'stack' value="sortStates">Sort states alphabetically</label>
+        <label>
+            <input type = "radio" name = 'stack' value="emissionsHigh">Sort emissions low to high</label>
+        <label>
+            <input type = "radio" name = 'stack' value="emissionsLow">Sort emissions high to low</label>
+        </div>
         <form name = 'text box' onSubmit = 'return handleClick()'>
             <input name='text' id = 'userDelay' placeholder = 'What is the delay?'> 
         </form>

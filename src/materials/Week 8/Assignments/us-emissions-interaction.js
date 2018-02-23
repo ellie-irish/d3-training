@@ -154,6 +154,7 @@ function buildChart(containerId) {
             var inputValue = this.value;
 
             var dataCopy = data.map(function(d) {return Object.assign({}, d); });
+            
             if (inputValue === "sortStates") {
                 var sort = function(a, z) {return d3.ascending(z.State, a.State); }
             }
