@@ -1,0 +1,26 @@
+<html>
+
+    <head>
+        <title>US Map with Solar Stations</title>
+    </head>
+
+    <body>
+    	<form id="form">
+            <input type = "checkbox" name = 'check' value="class1">Class 1</option>
+            <br>
+            <input type = "checkbox" name = 'check' value="class2">Class 2</option>
+            <br>
+            <input type = "checkbox" name = 'check' value="class3">Class 3</option>
+            <br>
+            <input name='text' id = 'minElevation' placeholder = 'Minimum elevation'/>
+            <input name='text' id = 'maxElevation' placeholder = 'Maximum elevation'/>  
+        </form>
+        <br>
+        <div id="map-holder"></div>
+
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script src="./us-station-interaction.js"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    </body>
+
+</html>
