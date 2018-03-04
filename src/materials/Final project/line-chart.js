@@ -7,7 +7,7 @@ function buildChart(containerId) {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 100
+        left: 50
     };
 
     // calculate dimensions without margins
@@ -26,32 +26,55 @@ function buildChart(containerId) {
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // read in population data
-    d3.json('population.json', function(error, data) {
+    // read BLLs_data.csv
+    d3.csv('BLLs_data.csv', function(error, data) {
+        readinError(error, 'failed to read children BLL data');
+        console.log(data, 'raw data');
+                
+            BLL = cleanData(data);
+            console.log(BLL, 'line clean data')
+            drawLine(BLL);
+    });
+
+    // produces error message in console if data was not read in
+    function readinError(error, msg) {
         if (error) {
-            console.error('failed to read data');
-            return;
+            console.error(msg);
         }
+    }
 
-        console.log('raw', data);
+    // data cleaning step - coerces data to correct type
+    function cleanData(data) {
+        return data
+            .map(function(d) {
+                return {
+                    year: String(d.Year),
+                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')),
+                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')),
+                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')),
+                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')),
+                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')),
+                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')),
+                    greater70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, ''))
+                };
+            });
+    }
 
-        // coerce data to numeric
-        var parseTime = d3.timeParse('%B-%Y');
-        console.log(parseTime);
 
-        data.forEach(function(d) {
-            d.pop = +d.pop;
-            d.date = parseTime((d.year).toString());
+    function drawLine(BLL) {
+
+        var years = [];
+        BLL.forEach(function(d) {
+            years.push(d.year)
         });
-
-        console.log('clean', data);
+        console.log(years, 'years');
 
         // scales
         var x = d3
             .scaleTime()
             .domain(
-                d3.extent(data, function(d) {
-                    return d.date;
+                d3.extent(years, function(d) {
+                    return d;
                 })
             )
             .range([0, innerWidth]);
@@ -62,7 +85,7 @@ function buildChart(containerId) {
             .scaleLinear()
             .domain([
                 0,
-                d3.max(data, function(d) {
+                d3.max(BLL, function(d) {
                     return d.pop;
                 })
             ])
@@ -96,9 +119,11 @@ function buildChart(containerId) {
                 return y(d.pop);
             });
 
-
-        // multiple lines
-        var countries = ['China', 'India']; // Add more countries to make chart scalable
+        var years = [];
+        BLL.forEach(function(d) {
+            years.push(d.year)
+        });
+        console.log(years, 'years');
 
         var colors = d3
             .scaleOrdinal() 
@@ -179,46 +204,7 @@ function buildChart(containerId) {
             .attr('dominant-baseline', 'baseline')
             .style('font-size', 24)
             .text('Population over Time for Various Countries');
-
-        // legend
-
-        g
-            .append('text')
-            .attr('class', 'legend')
-            .attr('x', innerWidth / 10)
-            .attr('y', 20)
-            .style('font-size', 16)
-            .text('China');
-        g
-            .append('text')
-            .attr('class', 'legend')
-            .attr('x', innerWidth / 10)
-            .attr('y', 50)
-            .style('font-size', 16)
-            .text('India');
-
-        g
-            .append('circle')
-            .attr('class', 'legend')
-            .attr('cx', innerWidth / 11)
-            .attr('cy', 14)
-            .attr('r', 5)
-            .attr('fill', function(d) {
-                return d3.interpolateRdYlBu(0.2);
-            });
-
-        g
-            .append('circle')
-            .attr('class', 'legend')
-            .attr('cx', innerWidth / 11)
-            .attr('cy', 44)
-            .attr('r', 5)
-            .attr('fill', function(d) {
-                return d3.interpolateRdYlBu(0.5);
-            })
-            .attr('stroke', 'gray');
-
-    });
+    }
 }
 
 buildChart('#line-chart-holder');

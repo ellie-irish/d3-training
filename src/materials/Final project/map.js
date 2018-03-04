@@ -21,6 +21,12 @@ function buildMap(containerId) {
         .attr('height', height)
         .attr('width', width);
 
+    var svg2 = d3
+        .select("#selections")
+        .append("svg")
+        .attr("width", 100)
+        .attr("height", 100);
+
     // create inner group element
     var g = svg
         .append('g')
@@ -76,6 +82,7 @@ function buildMap(containerId) {
     // function that creates map and has transitions for data filtering
     
     function draw(geojson, BLL) {
+        
         geojson.features.forEach(function(f) {
             f.properties.data = {}
             BLL.forEach(function(d) {
@@ -83,14 +90,17 @@ function buildMap(containerId) {
                     f.properties.data[d.year] = d}
             })
         });
+        console.log(geojson, 'new geojson');
 
         var albersProj = d3.geoAlbersUsa().scale(1800).translate([innerWidth / 2, innerHeight / 2]);
         var geoPath = d3.geoPath().projection(albersProj);
         
         //programmatically change with transition
-        //var selectedYear = d3.select('#myYear').node().value
+        var selectedYear = d3.select('#myYear').node().value
 
-        //selectedYear = '2011'
+        var selectedYear = '2014';
+        
+        //var selectedBLL = 'BLL5_9';
         var filteredData = BLL.filter(function(d) {
             return d.year == selectedYear;
         });
@@ -129,19 +139,20 @@ function buildMap(containerId) {
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
-            .style('font-size', 36)
+            .style('font-size', 48)
+            .style('font-weight', 'bold')
             .text('US Adolescent Blood Lead Levels');
 
-        d3.select('#myYear').on('input', function() {
-            updateYear(+this.value);
-        });
+        // d3.select('#myYear').on('input', function() {
+        //     updateYear(+this.value);
+        // });
 
-        var selectedYear = '2014';
+        // var selectedYear = '2014';
 
-        function updateYear(myYear) {
-          d3.select("#myYear").property("value", myYear);
-          var selectedYear = myYear;
-        }
+        // function updateYear(myYear) {
+        //   d3.select("#myYear").property("value", myYear);
+        //   var selectedYear = myYear;
+        // }
     }
 }
 

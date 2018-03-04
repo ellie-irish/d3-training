@@ -4,6 +4,7 @@
         <title>US Blood Lead Levels</title>
     </head>
 
+        <div id ="selections">
         <h3>BLL options</h3>
             <div>
                 <input id = "radio1" class = 'radio-css' value="5_9" type= 'radio' checked>
@@ -16,11 +17,15 @@
             <div>
                 <input type='range' min='1997' max='2015' id='myYear'/>
             </div>
-        <br>
+        </div>
         <div id="map-holder"></div>
+        <div id="bar-chart-holder"></div>
+        <div id="line-chart-holder"></div>
 
         <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script src="./final_project.js"></script>
+        <script src="./map.js"></script>
+        <script src="./bar-chart.js"></script>
+        <script src="./line-chart.js"></script>
         <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 </html>
