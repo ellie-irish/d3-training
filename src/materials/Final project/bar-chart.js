@@ -75,7 +75,8 @@ function buildChart(containerId) {
         var filteredData = BLL.filter(function(d) {
             return d.year == selectedYear;
         });
-        console.log(filteredData, 'filtered data');
+
+        console.log(filteredData, 'filtered bar data');
 
         // scales
         var x = d3
@@ -184,7 +185,7 @@ function buildChart(containerId) {
             .style('font-family', 'Calibri')
             .style('font-size', 48)
             .style('font-weight', 'bold')
-            .text('Emissions by State');
+            .text('Percent of Children with Specific BLL in US');
     }
 }
 

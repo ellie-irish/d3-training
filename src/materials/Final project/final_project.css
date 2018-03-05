@@ -1,0 +1,43 @@
+#page-wrap {
+	width: 900px; 
+	margin: 15px auto; 
+	position: sticky;
+}
+
+#sidebar { 
+	width: 500px; 
+	position: fixed;
+	background-color: black;
+	color: white;
+	padding: 20px;
+	padding-top: 0;
+	text-align: center;
+	right: 0;
+	margin-right: 30;
+	top: 300;
+}
+
+h2 {
+    font-family:'Calibri';
+    font-size: 42;
+}
+
+p {
+    font-family:'Calibri';
+    font-size: 24;
+}
+
+a {
+	color: yellow;
+	font-family: 'Calibri';
+	font-size: 24;
+}
+
+br {
+   content: " ";
+}
+
+h3 {
+	font-family:'Calibri';
+    font-size: 24;
+}

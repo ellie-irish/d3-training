@@ -2,15 +2,31 @@
 
     <head>
         <title>US Blood Lead Levels</title>
-    </head>
+        <link rel="stylesheet" type="text/css" href="./final_project.css"/>
 
+    </head>
+        <div id="page-wrap">
+            <div id="sidebar">
+        <h2>For more information</h2>
+            <p>To see more materials for your state's public health platform concerning children lead exposure, please visit:</p>
+            <p><a href="https://www.cdc.gov/nceh/lead/programs/default.htm">Find your State Program</a></p>
+            <br>
+            <p><a href="http://www.nchh.org/Resources/Lead-Links.aspx">The National Center for Healthy Housing</a></p>
+            <br>
+            <p><a href="http://www.who.int/mediacentre/factsheets/fs379/en/">World Health Organization: Lead Poisoning</a></p>
+            <br>
+            <p><a href="https://www.cdc.gov/nceh/lead/tips/sources.htm">What are the sources of lead poisoning?</a></p>
+            <br>
+            <p><a href="https://www.cdc.gov/nceh/lead/tools/assessement_tools.htm">CDC: Healthy Homes Assessment Tools</a></p>
+            <br>
+            <p><a href="https://www.cdc.gov/nceh/lead/policy.htm">CDC: Public Policy Materials</a></p>
+            </div>
+        </div>
         <div id ="selections">
         <h3>BLL options</h3>
             <div>
                 <input id = "radio1" class = 'radio-css' value="5_9" type= 'radio' checked>
                 <label for ='radio1' class = 'radio-css-label'>BLL 5 - 9</label>
-            </div>
-            <div>
                 <input id = "radio1" class = 'radio-css' value="10_14" type= 'radio'>
                 <label for ='radio1' class = 'radio-css-label'>BLL 10 - 14</label>
             </div>
@@ -18,8 +34,16 @@
                 <input type='range' min='1997' max='2015' id='myYear'/>
             </div>
         </div>
+        <div id = "tooltip">
+            <h3><span id = "State">&nbsp;</span></h3>
+            <h4><span id = "datum">&nbsp;</span></h4>
+        </div>
         <div id="map-holder"></div>
+        <br>
         <div id="bar-chart-holder"></div>
+        <br>
+
+        <select id="dropdown" placeholder='select a year'></select>
         <div id="line-chart-holder"></div>
 
         <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -27,5 +51,5 @@
         <script src="./bar-chart.js"></script>
         <script src="./line-chart.js"></script>
         <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
+        
 </html>

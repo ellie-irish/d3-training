@@ -49,6 +49,7 @@ function buildChart(containerId) {
             .map(function(d) {
                 return {
                     year: String(d.Year),
+                    state: String(d.State),
                     BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')),
                     BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')),
                     BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')),
@@ -60,26 +61,42 @@ function buildChart(containerId) {
             });
     }
 
-
     function drawLine(BLL) {
 
-        var years = [];
-        BLL.forEach(function(d) {
-            years.push(d.year)
+        var selectedState = 'Alabama';
+
+        var filteredData = BLL.filter(function(d) {
+            return d.state == selectedState;
         });
-        console.log(years, 'years');
+
+        var parseTime = d3.timeParse('%Y');
+        console.log(parseTime);
+
+        BLL.forEach(function(d) {
+            d.year = parseTime((d.year).toString());
+        });
+        console.log(filteredData, 'filtered state data');
+
+        // populate the drop-down
+        d3.select("#dropdown")
+          .selectAll("option")
+          .data(BLL)
+          .enter()
+          .append("option")
+          .attr("value", function(d) { return d; })
+          .text(function(d) { return d.state; });
 
         // scales
         var x = d3
             .scaleTime()
             .domain(
-                d3.extent(years, function(d) {
-                    return d;
+                d3.extent(filteredData, function(d) {
+                    return d.year;
                 })
             )
             .range([0, innerWidth]);
 
-        console.log(x.domain(), x.range());
+        console.log(x.domain(), x.range(), 'test daya years');
 
         var y = d3
             .scaleLinear()
@@ -94,7 +111,7 @@ function buildChart(containerId) {
         console.log(y.domain(), y.range());
 
         // axes
-        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(10));
+        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(1));
 
         g
             .append('g')
@@ -113,41 +130,61 @@ function buildChart(containerId) {
         var line = d3
             .line()
             .x(function(d) {
-                return x(d.date);
+                return x(d.year);
             })
             .y(function(d) {
                 return y(d.pop);
             });
 
         var years = [];
-        BLL.forEach(function(d) {
+        filteredData.forEach(function(d) {
             years.push(d.year)
         });
         console.log(years, 'years');
 
+        myColors = [d3.rgb('#ADD8E6'), d3.rgb('#87CEEB'), d3.rgb('#00BFFF'), d3.rgb('#4169E1'), d3.rgb('#0000FF'), d3.rgb('#00008B'), d3.rgb('#191970')]
+
         var colors = d3
             .scaleOrdinal() 
-            .domain(countries)
-            .range(d3.schemeRdYlBu[3]); // Replace range with number of countries in list
+            .domain(filteredData, function(d) {
+                return d.year;
+            } )
+            .range(myColors);
 
         var groups = g
-            .selectAll('.country')
-            .data(countries)
+            .selectAll('.years')
+            .data(years)
             .enter()
             .append('g')
             .attr('class', 'country');
 
+        // newData = filteredData.forEach(function(d) {
+        //         return d3.entries(d);
+        //     });
+
+        var groupedByYear = d3.nest()
+          .key(function(d) { return d.year; })
+          .entries(filteredData);
+
+        var groupedByYear = Array.from(groupedByYear);
+
+        // groupedByYear.forEach(function(d) {
+        //     d.values.splice(-1, 2);
+        // });
+
+        console.log(groupedByYear, 'new year data');
+
         groups
             .append('path')
             .datum(function(d) {
-                return data.filter(function(r) {
-                    return r.country === d;
+                return filteredData.filter(function(r) {
+                    return r.key == d;
                 });
             })
             .attr('class', 'pop-line')
             .attr('fill', 'none')
             .attr('stroke', function(d) {
-                return colors(d[0].country);
+                return colors(d[0].key);
             })
             .attr('stroke-width', 3)
             .attr('d', line);
@@ -156,21 +193,21 @@ function buildChart(containerId) {
             .selectAll('.pop-point')
             .data(function(d) {
                 return data.filter(function(r) {
-                    return r.country === d;
+                    return r.key === d;
                 });
             })
             .enter()
             .append('circle')
             .attr('class', 'pop-point')
             .attr('fill', function(d) {
-                return colors(d.country);
+                return colors(d.key);
             })
             .attr('stroke', 'gray')
             .attr('cx', function(d) {
-                return x(d.date);
+                return x(d.year);
             })
             .attr('cy', function(d) {
-                return y(d.pop);
+                return y(d.value);
             })
             .attr('r', 2);
 
@@ -182,6 +219,8 @@ function buildChart(containerId) {
             .attr('y', innerHeight + 30)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'hanging')
+            .style('font-family', 'Calibri')
+            .style('font-size', 26)
             .text('Year');
 
         g
@@ -192,7 +231,9 @@ function buildChart(containerId) {
             .attr('transform', 'rotate(-90,-80,' + innerHeight / 2 + ')')
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
-            .text('Population (counts)');
+            .style('font-family', 'Calibri')
+            .style('font-size', 26)
+            .text('% of Children Tested in US');
 
         // title
         g
@@ -202,8 +243,44 @@ function buildChart(containerId) {
             .attr('y', -20)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
-            .style('font-size', 24)
-            .text('Population over Time for Various Countries');
+            .style('font-size', 48)
+            .style('font-weight', 'bold')
+            .text('Percent of Children with Specific BLL in State');
+
+    var legendData = []
+    for(i=0; i<3; i++) {
+        legendData.push({BLL: years[i], myColor: myColors[i]})
+    }
+
+    console.log(legendData, 'legend data');
+
+        legendGroups = g.selectAll('.legend-entries')
+                .data(legendData)
+                .enter()
+                .append('g')
+                .attr('transform', function(d, i) {
+                    return 'translate(800,' + (400 + 20*i) + ')';
+                });
+
+        legendGroups.append('rect')
+            .attr('x', 15)
+            .attr('y', 0)
+            .attr('width', 20)
+            .attr('height', 10)
+            .attr('fill', function(d) {
+                return d.myColor;
+            });
+
+        legendGroups.append('text')
+            .attr('x', 5)
+            .attr('y', 0)
+            .attr('text-anchor', 'start')
+            .attr('alignment-baseline', 'hanging')
+            .style('font-size', 12)
+            .text(function(d) {
+                return d.BLL;
+            });
+        
     }
 }
 
