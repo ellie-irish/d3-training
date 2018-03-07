@@ -1,13 +1,13 @@
 function buildChart(containerId) {
     // size globals
-    var width = 2000;
-    var height = 1000;
+    var width = 1400;
+    var height = 800;
 
     var margin = {
         top: 50,
-        right: 50,
+        right: 150,
         bottom: 50,
-        left: 50
+        left: 100
     };
 
     // calculate dimensions without margins
@@ -50,33 +50,33 @@ function buildChart(containerId) {
                 return {
                     year: String(d.Year),
                     state: String(d.State),
-                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')),
-                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')),
-                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')),
-                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')),
-                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')),
-                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')),
-                    BLL70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, ''))
+                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    BLL70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
                 };
 
             });
-        new_data.columns = ['year', 'state', 'BLL5_9']
+        new_data.columns = ['year', 'state', 'BLL5_9', 'BLL10_14', 'BLL15_19', 'BLL20_24', 'BLL25_44', 'BLL45_69', 'BLL70']
         return new_data
     }
 
     function drawLine(BLL, selectedState) {
 
-        selectedState = 'Alabama';
-        var filteredData = BLL.filter(function(d) {
-            return d.state == selectedState;
-        });
-
         var parseTime = d3.timeParse('%Y');
         console.log(parseTime);
 
         BLL.forEach(function(d) {
-            d.year = parseTime((d.year).toString());
+            d.year = parseTime(d.year);
         });
+
+        var filteredData = BLL.filter(function(d) {
+            return d.state == selectedState;
+        });
+
         console.log(filteredData, 'filtered state data');
 
         var states = [];
@@ -101,12 +101,7 @@ function buildChart(containerId) {
           .append("option")
           .attr("value", function(d) { return d; })
           .text(function(d) { return d; });
-
-        //filteredData.forEach(function (d) {
-        //    delete d.state;
-        //});
         
-
         //Organize data
         var by_BLL_type = BLL.columns.slice(2).map(function (d) {
             return {
@@ -183,31 +178,12 @@ function buildChart(containerId) {
             .range(myColors);
 
         var groups = g
-            .selectAll('.years')
+            .selectAll('.path')
             .data(by_BLL_type)
-            .enter()
-            .append('g')
-            //.attr('class', 'country');
-
-        // newData = filteredData.forEach(function(d) {
-        //         return d3.entries(d);
-        //     });
-
-        //var groupedByYear = d3.nest()
-        //  .key(function(d) { return d.year; })
-        //  .entries(filteredData);
-
-        //var groupedByYear = Array.from(groupedByYear);
-
-        //// groupedByYear.forEach(function(d) {
-        ////     d.values.splice(-1, 2);
-        //// });
-
-        //console.log(groupedByYear, 'new year data');
-
-
+            
 
         groups
+            .enter()    
             .append('path')
             .datum(function (d) {
                 return d;
@@ -223,36 +199,39 @@ function buildChart(containerId) {
             });
 
         groups
-            .select('path')
             .attr('stroke', function (d) {
                 return colors(d.id);
             })
+            .attr('stroke-width', 3)
+            .attr('d', function (d) {
+                return line(d.values);
+            });
 
-        //groups
-        //    .selectAll('.pop-point')
-        //    .data(function(d) {
-        //        return data.filter(function(r) {
-        //            return r.key === d;
-        //        });
-        //    })
+        // groups
+        //    .selectAll('.year-point')
+        //    .data(function (d) {
+        //     return d;
+        //     })
         //    .enter()
         //    .append('circle')
-        //    .attr('class', 'pop-point')
-        //    .attr('fill', function(d) {
-        //        return colors(d.key);
-        //    })
-        //    .attr('stroke', 'gray')
+        //    .attr('class', 'year-point')
+        //    .attr('fill', function (d) {
+        //     return colors(d.id);
+        //     })
+        //    .attr('stroke', 'none')
         //    .attr('cx', function(d) {
         //        return x(d.year);
         //    })
         //    .attr('cy', function(d) {
-        //        return y(d.value);
+        //        return y(d.values[1]);
         //    })
         //    .attr('r', 2);
 
         // axis labels
- 
-        g
+        var xAxistitle = d3.selectAll('.x-axis-label')
+        
+        xAxistitle
+            .enter()
             .append('text')
             .attr('class', 'x-axis-label')
             .attr('x', innerWidth / 2)
@@ -262,7 +241,10 @@ function buildChart(containerId) {
             .style('font-family', 'Calibri')
             .style('font-size', 26)
             .text('Year');
-
+        
+            xAxistitle
+            .text('Year')
+        
         g
             .append('text')
             .attr('class', 'y-axis-label')
@@ -278,8 +260,7 @@ function buildChart(containerId) {
         // title
         var chartTitle = 'Percent of Children with Specific BLL in ' + selectedState;
 
-        var title = d3.selectAll('.title')
-            //.data([mapTitle]);
+        var title = d3.selectAll('.title').data([chartTitle]);
 
         title
             .append('text')
@@ -296,35 +277,35 @@ function buildChart(containerId) {
             .text(chartTitle)
 
     var legendData = []
-    for(i=0; i<3; i++) {
-        legendData.push({BLL: years[i], myColor: myColors[i]})
+    var categories = ['5 - 9 (ug/dl)', '10 - 14 (ug/dl)', '15 - 19 (ug/dl)', '20 - 24 (ug/dl)', '25 - 44 (ug/dl)', '45 - 69 (ug/dl)', '> 70 (ug/dl)']
+    for(i=0; i<7; i++) {
+        legendData.push({BLL: categories[i], myColor: myColors[i]})
     }
 
     console.log(legendData, 'legend data');
 
-        legendGroups = g.selectAll('.legend-entries')
+        legendGroups = svg.selectAll('.legend-entries')
                 .data(legendData)
                 .enter()
                 .append('g')
                 .attr('transform', function(d, i) {
-                    return 'translate(800,' + (400 + 20*i) + ')';
+                    return 'translate(1260,' + (100 + 40*i) + ')';
                 });
 
-        legendGroups.append('rect')
+        legendGroups.append('circle')
             .attr('x', 15)
             .attr('y', 0)
-            .attr('width', 20)
-            .attr('height', 10)
+            .attr('r', 15)
             .attr('fill', function(d) {
                 return d.myColor;
             });
 
         legendGroups.append('text')
-            .attr('x', 5)
+            .attr('class', 'line-legend-text')
+            .attr('x', 20)
             .attr('y', 0)
             .attr('text-anchor', 'start')
-            .attr('alignment-baseline', 'hanging')
-            .style('font-size', 12)
+            .attr('alignment-baseline', 'central')
             .text(function(d) {
                 return d.BLL;
             });
@@ -334,9 +315,8 @@ function buildChart(containerId) {
             updateState(+this.value);
         });
 
-
         function updateState(state) {
-            draw(BLL, state);
+            drawLine(BLL, state);
         }
     }
 }

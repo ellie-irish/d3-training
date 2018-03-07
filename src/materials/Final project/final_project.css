@@ -41,10 +41,6 @@ br {
    content: " ";
 }
 
-.viz-breaks {
-    content: normal;
-}
-
 h3 {
 	font-family:'Calibri';
     font-size: 24;
@@ -58,12 +54,32 @@ h3 {
     font-size: 26;
 }
 
-.y-axis {
+.bar-y-axis-label {
+    font-family: 'Calibri';
+    font-size: 24;
+}
+
+.bar-x-axis-label {
     font-family: 'Calibri';
     font-size: 18;
 }
 
-.x-axis {
+.line-legend-text {
     font-family: 'Calibri';
-    font-size: 18;
+    font-size: 20;
+}
+
+#selections {
+    left: 20;
+    margin-right: 10;
+    top: 100;
+    position: absolute;
+}
+
+#options-header {
+    text-align: center;
+}
+
+.bar-title {
+    font-size: 24;
 }

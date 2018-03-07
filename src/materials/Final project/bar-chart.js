@@ -1,13 +1,13 @@
 function buildChart(containerId) {
     // size globals
-    var width = 1500;
-    var height = 1000;
+    var width = 500;
+    var height = 700;
 
     var margin = {
-        top: 50,
+        top: 100,
         right: 50,
         bottom: 100,
-        left: 100
+        left: 200
     };
 
     // calculate dimensions without margins
@@ -22,7 +22,7 @@ function buildChart(containerId) {
         .attr('width', width);
 
     // create inner group element
-    var g = svg
+    var barChart = svg
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -105,7 +105,7 @@ function buildChart(containerId) {
         // axes
         var xAxis = d3.axisBottom(x);
 
-        g
+        barChart
             .append('g')
             .attr('class', 'x-axis')
             .attr('transform', 'translate(0,' + innerHeight + ')')
@@ -113,13 +113,13 @@ function buildChart(containerId) {
 
         var yAxis = d3.axisLeft(y).ticks(15);
 
-        g
+        barChart
             .append('g')
             .attr('class', 'y-axis')
             .call(yAxis);
 
         // bars
-       var bars = g
+       var bars = barChart
             .selectAll('.bar')
             .data(barData)
 
@@ -189,12 +189,12 @@ function buildChart(containerId) {
            .attr('stroke', 'grey');
 
         // axis labels
-        var xAxis = g.selectAll('.x-axis-label')
+        var barxAxis = barChart.selectAll('.x-axis-label');
 
-       xAxis
+        barxAxis
            .enter()
            .append('text')
-            .attr('class', 'x-axis-label')
+            .attr('class', 'bar-x-axis-label')
             .attr('x', innerWidth / 2)
             .attr('y', innerHeight + 30)
             .attr('text-anchor', 'middle')
@@ -203,12 +203,14 @@ function buildChart(containerId) {
             .style('font-size', 26)
                .text('log[Blood Lead Level (ug/dl)]');
 
-       xAxis
+        barxAxis
            .text('log[Blood Lead Level (ug/dl)]');
 
-        g
+        var baryAxis = barChart.selectAll('.y-axis-label');
+        baryAxis
+            .enter()
             .append('text')
-            .attr('class', 'y-axis-label')
+            .attr('class', 'bar-y-axis-label')
             .attr('x', -50)
             .attr('y', innerHeight / 2)
             .attr('transform', 'rotate(-90,-50,' + innerHeight / 2 + ')')
@@ -217,20 +219,31 @@ function buildChart(containerId) {
             .style('font-family', 'Calibri')
             .style('font-size', 26)
             .text('% of Children Tested in US');
+        
+        baryAxis
+            .text('% of Children Tested in US')
             
 
         // title
-        g
+        var barTitle = '% of Children with Specific BLL in ' + selectedYear;
+        
+        var myBartitle = barChart.selectAll('.bar-title').data([barTitle]);
+        
+        myBartitle
+            .enter()    
             .append('text')
-            .attr('class', 'title')
+            .attr('class', 'bar-title')
             .attr('x', innerWidth / 2)
-            .attr('y', -20)
+            .attr('y', -60)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
             .style('font-size', 48)
             .style('font-weight', 'bold')
-            .text('Percent of Children with Specific BLL in US');
+            .text(barTitle);
+        
+        myBartitle
+            .text(barTitle);
 
         //programmatically change with transition
         d3.select('#myYear').on('input', function () {
@@ -254,4 +267,4 @@ function buildChart(containerId) {
     }
 }
 
-buildChart('#bar-chart-holder');
+buildChart('#first-level-holder');

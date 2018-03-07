@@ -1,13 +1,13 @@
 function buildMap(containerId) {
     // size globals
-    var width = 2000;
-    var height = 1500;
+    var width = 1000;
+    var height = 700;
 
     var margin = {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 50
+        left: 100
     };
 
     // calculate dimensions without margins
@@ -92,10 +92,8 @@ function buildMap(containerId) {
         });
         console.log(geojson, 'new geojson');
 
-        var albersProj = d3.geoAlbersUsa().scale(1800).translate([innerWidth / 2, innerHeight / 2]);
+        var albersProj = d3.geoAlbersUsa().scale(1000).translate([innerWidth / 2, innerHeight / 2]);
         var geoPath = d3.geoPath().projection(albersProj);
-
-        var mapTitle = 'US Children Blood Lead Levels in ' + selectedYear;
 
         //var selectedBLL = 'BLL5_9';
         var filteredData = BLL.filter(function (d) {
@@ -139,13 +137,14 @@ function buildMap(containerId) {
 
 
         // map title
-        var title = d3.selectAll('.title')
-            //.data([mapTitle]);
+        var mapTitle = 'US Children Blood Lead Levels in ' + selectedYear;
+        
+        var title = d3.selectAll('.map-title').data([mapTitle]);
 
         title
             .enter()
             .append('text')
-            .attr('class', 'title')
+            .attr('class', 'map-title')
             .attr('x', innerWidth / 2)
             .attr('y', 20)
             .attr('text-anchor', 'middle')
@@ -231,4 +230,4 @@ function buildMap(containerId) {
     }
 }
 
-buildMap('#map-holder');
+buildMap('#first-level-holder');
