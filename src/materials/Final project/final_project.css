@@ -1,29 +1,33 @@
 #page-wrap {
 	width: 900px; 
 	margin: 15px auto; 
-	position: sticky;
+	position: relative;
 }
 
-#sidebar { 
-	width: 500px; 
-	position: fixed;
-	background-color: black;
-	color: white;
-	padding: 20px;
-	padding-top: 0;
-	text-align: center;
-	right: 0;
-	margin-right: 30;
-	top: 300;
+#sidebar {
+    width: 500px;
+    position: fixed;
+    background-color: #404040;
+    color: white;
+    padding: 20px;
+    padding-top: 0;
+    text-align: center;
+    right: 0;
+    margin-right: 200;
+    top: 300;
 }
 
+#body-format {
+    height: 1500;
+    width: 500
+}
 h2 {
     font-family:'Calibri';
     font-size: 42;
 }
 
 p {
-    font-family:'Calibri';
+    font-family: 'Calibri';
     font-size: 24;
 }
 
@@ -37,7 +41,29 @@ br {
    content: " ";
 }
 
+.viz-breaks {
+    content: normal;
+}
+
 h3 {
 	font-family:'Calibri';
     font-size: 24;
+}
+.radio-css-label {
+    font-family: 'Calibri';
+    font-size: 22;
+}
+.slider-css-label {
+    font-family: 'Calibri';
+    font-size: 26;
+}
+
+.y-axis {
+    font-family: 'Calibri';
+    font-size: 18;
+}
+
+.x-axis {
+    font-family: 'Calibri';
+    font-size: 18;
 }

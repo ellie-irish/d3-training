@@ -1,7 +1,7 @@
 function buildMap(containerId) {
     // size globals
     var width = 2000;
-    var height = 1500;
+    var height = 1000;
 
     var margin = {
         top: 50,
@@ -43,7 +43,7 @@ function buildMap(containerId) {
                 
                 BLL = cleanData(data);
                 console.log(BLL, 'clean data')
-                draw(geojson, BLL, '2014');
+                draw(geojson, BLL);
             });
 
         });
@@ -68,20 +68,20 @@ function buildMap(containerId) {
                     greater5: parseInt(d['Total greater or equal to 5'].replace(/,/g, '')),
                     greater10: parseInt(d['Total greater or equal to 10'].replace(/,/g, '')),
                     perGreater10: parseFloat(d['% greater or equal to 10']),
-                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    greater70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
+                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')),
+                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')),
+                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')),
+                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')),
+                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')),
+                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')),
+                    greater70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, ''))
                 };
             });
     }
 
     // function that creates map and has transitions for data filtering
     
-    function draw(geojson, BLL, selectedYear) {
+    function draw(geojson, BLL) {
         
         geojson.features.forEach(function(f) {
             f.properties.data = {}
@@ -94,6 +94,8 @@ function buildMap(containerId) {
 
         var albersProj = d3.geoAlbersUsa().scale(1800).translate([innerWidth / 2, innerHeight / 2]);
         var geoPath = d3.geoPath().projection(albersProj);
+        
+        var selectedYear = '2014';
 
         var mapTitle = 'US Children Blood Lead Levels in ' + selectedYear;
 
@@ -109,14 +111,12 @@ function buildMap(containerId) {
                 return d.BLL5_9;
             })
             )
-            .range([d3.rgb('#ffffff'), d3.rgb('#870900')]);
+            .range([d3.rgb('#ffe0dd'), d3.rgb('#870900')]);
 
         // map outline
-        var paths = g
+        g
             .selectAll('path')
             .data(geojson.features)
-
-        paths
             .enter()
             .append('path')
             .attr('d', geoPath)
@@ -129,21 +129,8 @@ function buildMap(containerId) {
             .style('stroke', 'black')
             .style('stroke-width', 0.5);
 
-        paths
-            .style('fill', function (d) {
-                if (d.properties.data[selectedYear] && d.properties.data[selectedYear].BLL5_9) {
-                    return colorScale(d.properties.data[selectedYear].BLL5_9);
-                }
-                else { return 'lightgrey'; }
-            });
-
-
         // map title
-        var title = d3.selectAll('.title')
-            //.data([mapTitle]);
-
-        title
-            .enter()
+        g
             .append('text')
             .attr('class', 'title')
             .attr('x', innerWidth / 2)
@@ -155,78 +142,17 @@ function buildMap(containerId) {
             .style('font-weight', 'bold')
             .text(mapTitle);
 
-        title
-            .text(mapTitle);
-
-        //// Add legend
-
-        //legendHeight = 500
-
-        //legend = d3.select('#legend')
-        //    .attr('width', 50)
-        //    .attr('height', legendHeight)
-        //    .append('g')
-        //    .attr('transform', 'translate(' + 20 + ',' + 20 + ')');
-
-        //    var gradient = legend.append('defs')
-        //        .append('linearGradient')
-        //        .attr('id', 'gradient')
-        //        .attr('x1', '0%') // bottom
-        //        .attr('y1', '100%')
-        //        .attr('x2', '0%') // to top
-        //        .attr('y2', '0%')
-        //        .attr('spreadMethod', 'pad');
-
-        //    //var pct = linspace(0, 100, scale.length).map(function (d) {
-        //    //    return Math.round(d) + '%';
-        //    //});
-
-        //    //var colourPct = d3.zip(pct, scale);
-
-        //    //colourPct.forEach(function (d) {
-        //    //    gradient.append('stop')
-        //    //        .attr('offset', d[0])
-        //    //        .attr('stop-color', d[1])
-        //    //        .attr('stop-opacity', 1);
-        //    //});
-
-        //    legend.append('rect')
-        //        .attr('x1', 0)
-        //        .attr('y1', 0)
-        //        .attr('width', 50)
-        //        .attr('height', legendHeight)
-        //        .style('fill', 'url(#gradient)');
-
-        //    // create a scale and axis for the legend
-        //    var legendScale = d3.scale.linear()
-        //        .domain(d3.extent(filteredData, function (d) {
-        //            return d.BLL5_9;
-        //        }))
-        //        .range([legendHeight, 0]);
-
-        //    var legendAxis = d3.svg.axis()
-        //        .scale(legendScale)
-        //        .orient("right")
-        //        .tickValues(d3.extent(filteredData, function (d) {
-        //            return d.BLL5_9;
-        //        }))
-        //        .tickFormat(d3.format("d"));
-
-        //    legendSvg.append("g")
-        //        .attr("class", "legend axis")
-        //        .attr("transform", "translate(" + 50 + ", 0)")
-        //        .call(legendAxis);
-
         //programmatically change with transition
         d3.select('#myYear').on('input', function () {
             updateYear(+this.value);
         });
-        
+
+        updateYear('2014');
 
         function updateYear(myYear) {
             d3.select("#myYear").property("value", myYear);
             d3.select("#myYear-label").text(myYear);
-            draw(geojson, BLL, myYear);
+            var selectedYear = myYear
         }
     }
 }
