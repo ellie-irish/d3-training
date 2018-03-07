@@ -3,74 +3,77 @@
     <head>
         <title>US Blood Lead Levels</title>
         <link rel="stylesheet" type="text/css" href="./final_project.css"/>
-
     </head>
-    <body><div id="body-format">    
-    <!-- <div id="page-wrap">
-            <div id="sidebar">
-        <h2>For more information</h2>
+
+    
+    <body><div id="body-format">
+    <h1>A Look at Lead Poisoning in the US</h1>
+    <div id="selections">
+        <h3 id="options-header">Select a year and blood lead level</h3>
+        <div>
+            <label for='myYear' class='slider-css-label' id="myYear-label">Year</label>
+            <input type='range' min='1997' max='2015' id="myYear" />
+        </div>
+        <div>
+            <input id="radio1" name="radio" class='radio-css' value="BLL5_9" type='radio' checked>
+            <label for='radio1' class='radio-css-label'>BLL 5 - 9</label>
+        </div>
+        <div>
+            <input id="radio2" name="radio" class='radio-css' value="BLL10_14" type='radio'>
+            <label for='radio2' class='radio-css-label'>BLL 10 - 14</label>
+        </div>
+        <div>
+            <input id="radio3" name="radio" class='radio-css' value="BLL15_19" type='radio'>
+            <label for='radio3' class='radio-css-label'>BLL 15 - 19</label>
+        </div>
+        <div>
+            <input id="radio4" name="radio" class='radio-css' value="BLL20_24" type='radio'>
+            <label for='radio4' class='radio-css-label'>BLL 20 - 24</label>
+        </div>
+        <div>
+            <input id="radio5" name="radio" class='radio-css' value="BLL25_44" type='radio'>
+            <label for='radio5' class='radio-css-label'>BLL 25 - 44</label>
+        </div>
+        <div>
+            <input id="radio6" name="radio" class='radio-css' value="BLL45_69" type='radio'>
+            <label for='radio6' class='radio-css-label'>BLL 45 - 69</label>
+        </div>
+        <div>
+            <input id="radio7" name="radio" class='radio-css' value="BLL70" type='radio'>
+            <label for='radio7' class='radio-css-label'>BLL > 70</label>
+        </div>
+    </div>
+    <div id="first-level">
+        <div id="map-holder"></div>
+        <div id="bar-holder"></div>
+    </div>
+    <div id="legend"></div>
+    <br>
+    <select id="dropdown" placeholder='select a year'></select>
+    <div id="second-level">
+        <div id="line-holder"></div>
+        <!--<div id="page-wrap">-->
+        <div id="sidebar">
+            <h2>For more information</h2>
             <p>To see more materials for your state's public health platform concerning children lead exposure, please visit:</p>
-            <p><a href="https://www.cdc.gov/nceh/lead/programs/default.htm">Find your State Program</a></p>
+            <p><a href="https://www.cdc.gov/nceh/lead/programs/default.htm">find your state program</a></p>
             <br>
-            <p><a href="http://www.nchh.org/Resources/Lead-Links.aspx">The National Center for Healthy Housing</a></p>
+            <p><a href="http://www.nchh.org/resources/lead-links.aspx">the national center for healthy housing</a></p>
             <br>
-            <p><a href="http://www.who.int/mediacentre/factsheets/fs379/en/">World Health Organization: Lead Poisoning</a></p>
+            <p><a href="http://www.who.int/mediacentre/factsheets/fs379/en/">world health organization: lead poisoning</a></p>
             <br>
-            <p><a href="https://www.cdc.gov/nceh/lead/tips/sources.htm">What are the sources of lead poisoning?</a></p>
+            <p><a href="https://www.cdc.gov/nceh/lead/tips/sources.htm">what are the sources of lead poisoning?</a></p>
             <br>
-            <p><a href="https://www.cdc.gov/nceh/lead/tools/assessement_tools.htm">CDC: Healthy Homes Assessment Tools</a></p>
+            <p><a href="https://www.cdc.gov/nceh/lead/tools/assessement_tools.htm">cdc: healthy homes assessment tools</a></p>
             <br>
-            <p><a href="https://www.cdc.gov/nceh/lead/policy.htm">CDC: Public Policy Materials</a></p>
-            </div>
-        </div> -->
-        <div id="selections">
-        <h3 id="options-header">BLL options</h3>
-            <div>
-                <label for='myYear' class='slider-css-label' id="myYear-label">Year</label>
-                <input type='range' min='1997' max='2015' id="myYear" />
-            </div>
-            <div>
-                <input id = "radio1" class = 'radio-css' value="BLL5_9" type= 'radio' checked>
-                <label for ='radio1' class = 'radio-css-label'>BLL 5 - 9</label>
-            </div>
-            <div>
-                <input id = "radio2" class = 'radio-css' value="BLL10_14" type= 'radio'>
-                <label for ='radio2' class = 'radio-css-label'>BLL 10 - 14</label>
-            </div>
-            <div>
-                <input id = "radio3" class = 'radio-css' value="BLL15_19" type= 'radio'>
-                <label for ='radio3' class = 'radio-css-label'>BLL 15 - 19</label>
-            </div>
-            <div>
-                <input id = "radio4" class = 'radio-css' value="BLL20_24" type= 'radio'>
-                <label for ='radio4' class = 'radio-css-label'>BLL 20 - 24</label>
-            </div>
-            <div>
-                <input id = "radio5" class = 'radio-css' value="BLL25_44" type= 'radio'>
-                <label for ='radio5' class = 'radio-css-label'>BLL 25 - 44</label>
-            </div>
-            <div>
-                <input id = "radio6" class = 'radio-css' value="BLL45_69" type= 'radio'>
-                <label for ='radio6' class = 'radio-css-label'>BLL 45 - 69</label>
-            </div>
-            <div>
-                <input id = "radio7" class = 'radio-css' value="greater70" type= 'radio'>
-                <label for ='radio7' class = 'radio-css-label'>BLL > 70</label>
-            </div>
+            <p><a href="https://www.cdc.gov/nceh/lead/policy.htm">cdc: public policy materials</a></p>
         </div>
-        <div id = "tooltip">
-            <h3><span id = "State">&nbsp;</span></h3>
-            <h4><span id = "datum">&nbsp;</span></h4>
-        </div>
-        <div id="first-level-holder"></div>
-        <div id="legend"></div>
-        <br>
-        <select id="dropdown" placeholder='select a year'></select>
-        <div id="line-chart-holder"></div>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script src="./map.js"></script>
-        <script src="./bar-chart.js"></script>
-        <script src="./line-chart.js"></script>
-        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    </div></body>
+        <!--</div>-->
+    </div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="./map.js"></script>
+    <script src="./bar-chart.js"></script>
+    <script src="./line-chart.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+</div></body>
 </html>

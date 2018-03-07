@@ -1,11 +1,11 @@
 function buildChart(containerId) {
     // size globals
-    var width = 1400;
-    var height = 800;
+    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width * 0.8;
+    var height = d3.select(containerId).node().parentNode.getBoundingClientRect().height;
 
     var margin = {
         top: 50,
-        right: 150,
+        right: 210,
         bottom: 50,
         left: 100
     };
@@ -199,6 +199,9 @@ function buildChart(containerId) {
             });
 
         groups
+            .transition()
+            .duration(1500)
+            .delay(500)
             .attr('stroke', function (d) {
                 return colors(d.id);
             })
@@ -284,18 +287,18 @@ function buildChart(containerId) {
 
     console.log(legendData, 'legend data');
 
-        legendGroups = svg.selectAll('.legend-entries')
+        legendGroups = g.selectAll('.legend-entries')
                 .data(legendData)
                 .enter()
                 .append('g')
                 .attr('transform', function(d, i) {
-                    return 'translate(1260,' + (100 + 40*i) + ')';
+                    return 'translate(1140,' + (80 + 40*i) + ')';
                 });
 
         legendGroups.append('circle')
-            .attr('x', 15)
+            .attr('x', 18)
             .attr('y', 0)
-            .attr('r', 15)
+            .attr('r', 10)
             .attr('fill', function(d) {
                 return d.myColor;
             });
@@ -321,4 +324,4 @@ function buildChart(containerId) {
     }
 }
 
-buildChart('#line-chart-holder');
+buildChart('#line-holder');

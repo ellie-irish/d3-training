@@ -1,13 +1,13 @@
 function buildMap(containerId) {
     // size globals
-    var width = 1000;
-    var height = 700;
+    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width / 2;
+    var height = d3.select(containerId).node().parentNode.getBoundingClientRect().height;
 
     var margin = {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 100
+        left: 20
     };
 
     // calculate dimensions without margins
@@ -42,8 +42,19 @@ function buildMap(containerId) {
             console.log(data, 'raw data');
                 
                 BLL = cleanData(data);
-                console.log(BLL, 'clean data')
-                draw(geojson, BLL, '2014');
+                console.log(BLL, 'clean data');
+
+                geojson.features.forEach(function (f) {
+                    f.properties.data = {}
+                    BLL.forEach(function (d) {
+                        if (d.abb == f.properties.code) {
+                            f.properties.data[d.year] = d
+                        }
+                    })
+                });
+                console.log(geojson, 'new geojson');
+
+                draw(geojson, BLL, '2014', 'BLL5_9');
             });
 
         });
@@ -74,25 +85,19 @@ function buildMap(containerId) {
                     BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
                     BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
                     BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    greater70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
+                    BLL70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
                 };
             });
     }
 
     // function that creates map and has transitions for data filtering
     
-    function draw(geojson, BLL, selectedYear) {
-        
-        geojson.features.forEach(function(f) {
-            f.properties.data = {}
-            BLL.forEach(function(d) {
-                if (d.abb == f.properties.code) {
-                    f.properties.data[d.year] = d}
-            })
-        });
-        console.log(geojson, 'new geojson');
 
-        var albersProj = d3.geoAlbersUsa().scale(1000).translate([innerWidth / 2, innerHeight / 2]);
+    function draw(geojson, BLL, selectedYear, selectedBLL) {
+
+        console.log(geojson, 'geojson test');
+
+        var albersProj = d3.geoAlbersUsa().scale(innerWidth*1.2).translate([innerWidth / 2, innerHeight / 2]);
         var geoPath = d3.geoPath().projection(albersProj);
 
         //var selectedBLL = 'BLL5_9';
@@ -104,7 +109,7 @@ function buildMap(containerId) {
         var colorScale = d3
             .scaleLog()
             .domain(d3.extent(filteredData, function (d) {
-                return d.BLL5_9;
+                return d[selectedBLL];
             })
             )
             .range([d3.rgb('#ffffff'), d3.rgb('#870900')]);
@@ -119,8 +124,8 @@ function buildMap(containerId) {
             .append('path')
             .attr('d', geoPath)
             .style('fill', function (d) {
-                if (d.properties.data[selectedYear] && d.properties.data[selectedYear].BLL5_9) {
-                    return colorScale(d.properties.data[selectedYear].BLL5_9);
+                if (d.properties.data[selectedYear] && d.properties.data[selectedYear][selectedBLL]) {
+                    return colorScale(d.properties.data[selectedYear][selectedBLL]);
                 }
                 else { return 'lightgrey'; }
             })
@@ -129,17 +134,19 @@ function buildMap(containerId) {
 
         paths
             .style('fill', function (d) {
-                if (d.properties.data[selectedYear] && d.properties.data[selectedYear].BLL5_9) {
-                    return colorScale(d.properties.data[selectedYear].BLL5_9);
+                if (d.properties.data[selectedYear] && d.properties.data[selectedYear][selectedBLL]) {
+                    return colorScale(d.properties.data[selectedYear][selectedBLL]);
                 }
                 else { return 'lightgrey'; }
-            });
+            })
+            .style('stroke', 'black')
+            .style('stroke-width', 0.5);
 
 
         // map title
         var mapTitle = 'US Children Blood Lead Levels in ' + selectedYear;
         
-        var title = d3.selectAll('.map-title').data([mapTitle]);
+        var title = g.selectAll('.map-title').data([mapTitle]);
 
         title
             .enter()
@@ -217,17 +224,20 @@ function buildMap(containerId) {
         //        .call(legendAxis);
 
         //programmatically change with transition
-        d3.select('#myYear').on('input', function () {
-            updateYear(+this.value);
-        });
-        
-
-        function updateYear(myYear) {
-            d3.select("#myYear").property("value", myYear);
+        d3.select('#myYear').on('input.map', function () {
+            var myYear = this.value;
             d3.select("#myYear-label").text(myYear);
-            draw(geojson, BLL, myYear);
-        }
+            draw(geojson, BLL, myYear, selectedBLL);
+        });
+
+        d3.selectAll('.radio-css').on('change', function () {
+            if (this.checked) {
+                draw(geojson, BLL, selectedYear, this.value);
+            }
+        })        
+
+
     }
 }
 
-buildMap('#first-level-holder');
+buildMap('#map-holder');

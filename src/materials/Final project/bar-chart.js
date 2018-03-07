@@ -1,7 +1,7 @@
 function buildChart(containerId) {
     // size globals
-    var width = 500;
-    var height = 700;
+    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width / 2;
+    var height = d3.select(containerId).node().parentNode.getBoundingClientRect().height;
 
     var margin = {
         top: 100,
@@ -111,12 +111,19 @@ function buildChart(containerId) {
             .attr('transform', 'translate(0,' + innerHeight + ')')
             .call(xAxis);
 
+        barChart
+            .call(xAxis)
+
         var yAxis = d3.axisLeft(y).ticks(15);
 
         barChart
+            .enter()
             .append('g')
             .attr('class', 'y-axis')
             .call(yAxis);
+
+        barChart
+            .call(yAxis)
 
         // bars
        var bars = barChart
@@ -246,25 +253,24 @@ function buildChart(containerId) {
             .text(barTitle);
 
         //programmatically change with transition
-        d3.select('#myYear').on('input', function () {
+        d3.select('#myYear').on('input.bar', function () {
             updateYear(+this.value);
         });
-
 
         function updateYear(selectedYear) {
             drawBar(BLL, selectedYear);
         }
 
-        function mousemove() {
-            var x0 = x.invert(d3.mouse(this)[0]),
-                i = bisectDate(data, x0, 1),
-                d0 = data[i - 1],
-                d1 = data[i],
-                d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-            focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-            focus.select("text").text(formatCurrency(d.close));
-        }
+        //function mousemove() {
+        //    var x0 = x.invert(d3.mouse(this)[0]),
+        //        i = bisectDate(data, x0, 1),
+        //        d0 = data[i - 1],
+        //        d1 = data[i],
+        //        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+        //    focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+        //    focus.select("text").text(formatCurrency(d.close));
+        //}
     }
 }
 
-buildChart('#first-level-holder');
+buildChart('#bar-holder');
