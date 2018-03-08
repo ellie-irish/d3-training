@@ -7,7 +7,7 @@ function buildChart(containerId) {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 50
+        left: 100
     };
 
     // calculate dimensions without margins
@@ -33,6 +33,7 @@ function buildChart(containerId) {
                 
             BLL = cleanData(data);
             console.log(BLL, 'clean data')
+            
             drawBar(BLL, '2014');
         });
 
@@ -53,13 +54,13 @@ function buildChart(containerId) {
             .map(function(d) {
                 return {
                     year: String(d.Year),
-                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
+                    'BLL 5 to 9': parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 10 to 14': parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 15 to 19': parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 20 to 24': parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 25 to 44': parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 45 to 69': parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL > 70': parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
                 };
             })
     }
@@ -88,8 +89,6 @@ function buildChart(containerId) {
             .range([0, innerWidth])
             .padding(0.2);
 
-        console.log(x.domain());
-
         var y = d3
             .scaleLinear()
             .domain([
@@ -100,27 +99,32 @@ function buildChart(containerId) {
             ])
             .range([innerHeight, 0]);
 
-        console.log(y.domain(), y.range());
-
         // axes
-        var xAxis = d3.axisBottom(x);
+        var BarxAxis = d3.axisBottom(x);
 
-        g
-            .append('g')
-            .attr('class', 'x-axis')
-            .attr('transform', 'translate(0,' + innerHeight + ')')
-            .call(xAxis);
+        var xAxisbar = g.selectAll('.x-axis-bar').data([1]);
 
-        var yAxis = d3.axisLeft(y).ticks(15);
-
-        g
+        xAxisbar
             .enter()
             .append('g')
-            .attr('class', 'y-axis')
-            .call(yAxis);
+            .attr('class', 'x-axis-bar')
+            .attr('transform', 'translate(0,' + innerHeight + ')')
+            .call(BarxAxis);
 
-        g
-            .call(yAxis)
+        var BaryAxis = d3.axisLeft(y).ticks(15);
+
+        var yAxisbar = g
+            .selectAll('.y-axis-bar')
+            .data([1]);
+
+        yAxisbar
+            .enter()
+            .append('g')
+            .attr('class', 'y-axis-bar')
+            .call(BaryAxis);
+
+        yAxisbar
+            .call(BaryAxis);
 
         // bars
        var bars = g
@@ -137,32 +141,37 @@ function buildChart(containerId) {
                 return x(d.key);
             })
             .attr('y', function(d) {
-                return y(d.value);
+                if (isNaN(d.value)) { return y(0); }
+                else { return y(d.value); }
             })
             .attr('width', x.bandwidth())
             .attr('height', function(d) {
                 return innerHeight - y(d.value);
             })
             .attr("fill", function(d) {
-                if (d.key == 'BLL5_9') {
+                if (d.key == 'BLL 5 to 9') {
                     return colors[0];
-                } else if (d.key == 'BLL10_14') {
+                } else if (d.key == 'BLL 10 to 14') {
                     return colors[1];
-                } else if (d.key == "BLL15_19") {
+                } else if (d.key == "BLL 15 to 19") {
                     return colors[2];
-                } else if (d.key == "BLL20_24") {
+                } else if (d.key == "BLL 20 to 24") {
                     return colors[3];
-                } else if (d.key == "BLL25_44") {
+                } else if (d.key == "BLL 25 to 44") {
                     return colors[4];
-                } else if (d.key == "BLL45_69") {
+                } else if (d.key == "BLL 45 to 69") {
                     return colors[5];
-                } else if (d.key == "BLL70") {
+                } else if (d.key == "BLL > 70") {
                     return colors[6];
                 }
               })
-           .attr('stroke', 'grey');
+           .attr('stroke', 'black');
 
        bars
+           .attr('class', 'bar')
+           .transition()
+           .duration(2000)
+           .delay(500)
            .attr('x', function (d) {
                return x(d.key);
            })
@@ -174,52 +183,54 @@ function buildChart(containerId) {
                return innerHeight - y(d.value);
            })
            .attr("fill", function(d) {
-                if (d.key == 'BLL5_9') {
-                    return colors[0];
-                } else if (d.key == 'BLL10_14') {
-                    return colors[1];
-                } else if (d.key == "BLL15_19") {
-                    return colors[2];
-                } else if (d.key == "BLL20_24") {
-                    return colors[3];
-                } else if (d.key == "BLL25_44") {
-                    return colors[4];
-                } else if (d.key == "BLL45_69") {
-                    return colors[5];
-                } else if (d.key == "BLL70") {
-                    return colors[6];
-                }
+               if (d.key == 'BLL 5 to 9') {
+                   return colors[0];
+               } else if (d.key == 'BLL 10 to 14') {
+                   return colors[1];
+               } else if (d.key == "BLL 15 to 19") {
+                   return colors[2];
+               } else if (d.key == "BLL 20 to 24") {
+                   return colors[3];
+               } else if (d.key == "BLL 25 to 44") {
+                   return colors[4];
+               } else if (d.key == "BLL 45 to 69") {
+                   return colors[5];
+               } else if (d.key == "BLL > 70") {
+                   return colors[6];
+               }
               })
-           .attr('stroke', 'grey');
+           .attr('stroke', 'black');
 
         // axis labels
-        //var barxAxis = g.selectAll('.x-axis-label');
+        var barxAxis = g.selectAll('.x-axis-bar-label').data([1]);
 
-        g
+        barxAxis
             .enter()
             .append('text')
-            .attr('class', 'bar-x-axis-label')
+            .attr('class', 'x-axis-bar-label')
             .attr('x', innerWidth / 2)
             .attr('y', innerHeight + 30)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'hanging')
+            .attr('fill', 'black')
             .style('font-family', 'Calibri')
-            .style('font-size', 26)
+            .style('font-size', 18)
             .text('log[Blood Lead Level (ug/dl)]');
 
-        var baryAxis = g.selectAll('.y-axis-label');
+
+        var baryAxis = g.selectAll('.y-axis-bar-label').data([1]);
 
         baryAxis
             .enter()
             .append('text')
-            .attr('class', 'bar-y-axis-label')
+            .attr('class', 'y-axis-bar-label')
             .attr('x', -50)
             .attr('y', innerHeight / 2)
             .attr('transform', 'rotate(-90,-50,' + innerHeight / 2 + ')')
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
-            .style('font-size', 26)
+            .style('font-size', 18)
             .text('% of Children Tested in US');
         
         baryAxis
@@ -236,16 +247,17 @@ function buildChart(containerId) {
             .append('text')
             .attr('class', 'bar-title')
             .attr('x', innerWidth / 2)
-            .attr('y', -60)
+            .attr('y', -10)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
+            .attr('fill', 'black')
             .style('font-family', 'Calibri')
-            .style('font-size', 48)
-            .style('font-weight', 'bold')
+            .style('font-size', 28)
             .text(barTitle);
         
         myBartitle
-            .text(barTitle);
+            .text(barTitle)
+            .raise();
 
         //programmatically change with transition
         d3.select('#myYear').on('input.bar', function () {

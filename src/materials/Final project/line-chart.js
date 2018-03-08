@@ -18,6 +18,7 @@ function buildChart(containerId) {
     var svg = d3
         .select(containerId)
         .append('svg')
+        .attr('class', 'line-svg')
         .attr('height', height)
         .attr('width', width);
 
@@ -33,6 +34,29 @@ function buildChart(containerId) {
                 
             BLL = cleanData(data);
             console.log(BLL, 'line clean data')
+
+            var states = [];
+            BLL.forEach(function (d) {
+                states.push(d.state)
+            });
+
+            Array.prototype.unique = function () {
+                return this.filter(function (value, index, self) {
+                    return self.indexOf(value) === index; // returns only those values that pass as 'true' given the callback function. 
+                });
+            }
+
+            var uniqueStates = states.unique();
+            console.log(uniqueStates, 'unique states');
+
+            // populating the drop-down
+            d3.select("#dropdown")
+                .selectAll("option")
+                .data(uniqueStates)
+                .enter()
+                .append("option")
+                .attr("value", function (d) { return d; })
+                .text(function (d) { return d; });
             drawLine(BLL, 'Alabama');
     });
 
@@ -65,43 +89,21 @@ function buildChart(containerId) {
     }
 
     function drawLine(BLL, selectedState) {
-
-        var parseTime = d3.timeParse('%Y');
-
-        BLL.forEach(function(d) {
-            d.year = parseTime(d.year);
-        });
-
-        console.log(BLL, 'parsed data');
-
+        
         var filteredData = BLL.filter(function(d) {
             return d.state == selectedState;
         });
 
         console.log(filteredData, 'filtered state data');
 
-        var states = [];
-        BLL.forEach(function (d) {
-                states.push(d.state)
+        var parseTime = d3.timeParse('%Y');
+
+        filteredData.forEach(function (d) {
+            d.year = parseTime(d.year);
         });
 
-        Array.prototype.unique = function () {
-            return this.filter(function (value, index, self) {
-                return self.indexOf(value) === index; // returns only those values that pass as 'true' given the callback function. 
-            });
-        }
-
-        var uniqueStates = states.unique();
-        console.log(uniqueStates, 'unique states');
-
-        // populating the drop-down
-        d3.select("#dropdown")
-          .selectAll("option")
-          .data(uniqueStates)
-          .enter()
-          .append("option")
-          .attr("value", function(d) { return d; })
-          .text(function(d) { return d; });
+        console.log(filteredData, 'parsed data');
+        
         
         //Organize data
         var by_BLL_type = BLL.columns.slice(2).map(function (d) {
@@ -134,19 +136,30 @@ function buildChart(containerId) {
             .range([innerHeight, 0]);
 
         // x-axis
-        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(1));
-        g
+
+        var LinexAxis = d3.axisBottom(x).ticks(d3.timeYear.every(1));
+        var xAxisLine = g.selectAll('.x-axis-line').data([1]);
+
+        xAxisLine
+            .enter()
             .append('g')
-            .attr('class', 'x-axis')
+            .attr('class', 'x-axis-line')
             .attr('transform', 'translate(0,' + innerHeight + ')')
-            .call(xAxis);
+            .call(LinexAxis);
+        xAxisLine.call(LinexAxis);
 
         // y-axis
-        var yAxis = d3.axisLeft(y).ticks(5);
-        g
+        var LineyAxis = d3.axisLeft(y).ticks(5);
+        var yAxisLine = g.selectAll('.y-axis-line').data([1]);
+
+        yAxisLine
+            .enter()
             .append('g')
-            .attr('class', 'y-axis')
-            .call(yAxis);
+            .attr('class', 'y-axis-line')
+            .call(LineyAxis);
+        yAxisLine
+            .call(LineyAxis);
+
 
         // line generator
         var line = d3
@@ -179,7 +192,7 @@ function buildChart(containerId) {
             .range(myColors);
 
         var groups = g
-            .selectAll('.path')
+            .selectAll('.BLL-line')
             .data(by_BLL_type)
 
         groups
@@ -199,8 +212,9 @@ function buildChart(containerId) {
             });
 
         groups
+            .attr('class', 'BLL-line')
             .transition()
-            .duration(1500)
+            .duration(2000)
             .delay(500)
             .attr('stroke', function (d) {
                 return colors(d.id);
@@ -209,7 +223,8 @@ function buildChart(containerId) {
             .attr('d', function (d) {
                 return line(d.values);
             });
-        var xAxistitle = g.selectAll('.x-axis-label')
+
+        var xAxistitle = g.selectAll('.x-axis-label').data([1]);
         
         xAxistitle
             .enter()
@@ -220,24 +235,25 @@ function buildChart(containerId) {
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'hanging')
             .style('font-family', 'Calibri')
-            .style('font-size', 26)
+            .style('font-size', 18)
             .text('Year');
         
         xAxistitle
             .text('Year')
         
-        var yAxistitle = g.selectAll('.x-axis-label')
+        var yAxistitle = g.selectAll('.y-axis-label').data([1]);
         
         yAxistitle
+            .enter()
             .append('text')
             .attr('class', 'y-axis-label')
-            .attr('x', -30)
+            .attr('x', -50)
             .attr('y', innerHeight / 2)
-            .attr('transform', 'rotate(-90,-80,' + innerHeight / 2 + ')')
+            .attr('transform', 'rotate(-90,-50,' + innerHeight / 2 + ')')
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
-            .style('font-size', 26)
+            .style('font-size', 18)
             .text('% of Children Tested in US');
         
         yAxistitle
@@ -246,17 +262,16 @@ function buildChart(containerId) {
         // title
         var chartTitle = 'Percent of Children with Specific BLL in ' + selectedState;
 
-        var title = g.selectAll('.title').data([chartTitle]);
+        var title = g.selectAll('.title-line').data([chartTitle]);
 
         title
+            .enter()
             .append('text')
-            .attr('class', 'title')
+            .attr('class', 'title-line')
             .attr('x', innerWidth / 2)
             .attr('y', -20)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
-            .style('font-size', 48)
-            .style('font-weight', 'bold')
             .text(chartTitle);
 
         title
@@ -270,19 +285,19 @@ function buildChart(containerId) {
 
     console.log(legendData, 'legend data');
         
-        var legendPosition = innerWidth - margin.right;
+        var legendPosition = innerWidth + 30;
         legendGroups = g.selectAll('.legend-entries')
                 .data(legendData)
                 .enter()
                 .append('g')
                 .attr('transform', function(d, i) {
-                    return 'translate(' + legendPosition+ ',' + (10 + 40*i) + ')';
+                    return 'translate(' + legendPosition + ',' + (10 + 35*i) + ')';
                 });
 
         legendGroups.append('circle')
             .attr('x', 18)
             .attr('y', 0)
-            .attr('r', 10)
+            .attr('r', 8)
             .attr('fill', function(d) {
                 return d.myColor;
             });

@@ -123,12 +123,13 @@ function buildMap(containerId) {
 
         // map outline
         var paths = g
-            .selectAll('path')
+            .selectAll('.map-draw')
             .data(geojson.features)
 
         paths
             .enter()
             .append('path')
+            .attr('class', 'map-draw')
             .attr('d', geoPath)
             .style('fill', function (d) {
                 if (d.properties.data[selectedYear] && d.properties.data[selectedYear][selectedBLL]) {
@@ -160,11 +161,11 @@ function buildMap(containerId) {
             .append('text')
             .attr('class', 'map-title')
             .attr('x', innerWidth / 2)
-            .attr('y', -10)
+            .attr('y', margin.top - 80)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
-            .style('font-size', 42)
+            .style('font-size', 28)
             .text(mapTitle);
 
         title
@@ -172,62 +173,73 @@ function buildMap(containerId) {
 
         //// Add legend
 
-        //legendHeight = 500
+        //Append a defs (for definition) element to your SVG
+        var defs = svg.append("defs");
 
-        //legend = d3.select('#legend')
-        //    .attr('width', 50)
-        //    .attr('height', legendHeight)
-        //    .append('g')
-        //    .attr('transform', 'translate(' + 20 + ',' + 20 + ')');
+        //Append a linearGradient element to the defs and give it a unique id
+        var linearGradient = defs.append("linearGradient")
+            .attr("id", "linear-gradient");
 
-        //    var gradient = legend.append('defs')
-        //        .append('linearGradient')
-        //        .attr('id', 'gradient')
-        //        .attr('x1', '0%') // bottom
-        //        .attr('y1', '100%')
-        //        .attr('x2', '0%') // to top
-        //        .attr('y2', '0%')
-        //        .attr('spreadMethod', 'pad');
+        linearGradient
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "0%")
+            .attr("y2", "100%");
 
-        //    //var pct = linspace(0, 100, scale.length).map(function (d) {
-        //    //    return Math.round(d) + '%';
-        //    //});
+        linearGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", "#ffffff"); //white
 
-        //    //var colourPct = d3.zip(pct, scale);
+        //Set the color for the end (100%)
+        linearGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#870900"); //dark red
 
-        //    //colourPct.forEach(function (d) {
-        //    //    gradient.append('stop')
-        //    //        .attr('offset', d[0])
-        //    //        .attr('stop-color', d[1])
-        //    //        .attr('stop-opacity', 1);
-        //    //});
+        var legendWidth = 20;
+        var legendHeight = innerHeight * 0.7;
 
-        //    legend.append('rect')
-        //        .attr('x1', 0)
-        //        .attr('y1', 0)
-        //        .attr('width', 50)
-        //        .attr('height', legendHeight)
-        //        .style('fill', 'url(#gradient)');
+        //Color Legend container
+        var legendsvg = svg.append("g")
+            .attr("class", "legendWrapper")
+            .attr("transform", "translate(" + (margin.left - 20) + "," + (innerHeight / 3) + ")");
 
-        //    // create a scale and axis for the legend
-        //    var legendScale = d3.scale.linear()
-        //        .domain(d3.extent(filteredData, function (d) {
-        //            return d.BLL5_9;
-        //        }))
-        //        .range([legendHeight, 0]);
+        //Draw the Rectangle
+        legendsvg.append("rect")
+            .attr("class", "legendRect")
+            .attr("x", margin.left - 10)
+            .attr("y", 0)
+            .attr("width", legendWidth)
+            .attr("height", legendHeight)
+            .style("fill", "url(#linear-gradient)")
+            .style('stroke', 'black');
 
-        //    var legendAxis = d3.svg.axis()
-        //        .scale(legendScale)
-        //        .orient("right")
-        //        .tickValues(d3.extent(filteredData, function (d) {
-        //            return d.BLL5_9;
-        //        }))
-        //        .tickFormat(d3.format("d"));
+        //Append title
 
-        //    legendSvg.append("g")
-        //        .attr("class", "legend axis")
-        //        .attr("transform", "translate(" + 50 + ", 0)")
-        //        .call(legendAxis);
+        legendsvg.append("text")
+            .attr("class", "legendTitle")
+            .attr("x", 0)
+            .attr("y", innerHeight/2)
+            .attr('transform', 'rotate(-90, ' + (margin.left - 20) + ',' + innerHeight / 1.8 + ')')
+            .text("% of Tested Children");
+
+        legendsvg
+            .text("% of Tested Children");
+
+        ////Set scale for x-axis
+        //var xLegendScale = d3.scaleLog()
+        //    .range([0, legendWidth])
+        //    .domain([0, 100]);
+
+        ////Define x-axis
+        //var xLegendAxis = d3.axisLeft()
+        //    .ticks(5)  //Set rough # of ticks
+        //    .scale(xLegendScale);
+
+        ////Set up X axis
+        //legendsvg.append("g")
+        //    .attr("class", "axis")  //Assign "axis" class
+        //    .attr("transform", "translate(" + (-legendWidth / 2) + "," + (10 + legendHeight) + ")")
+        //    .call(xLegendAxis);
 
         //programmatically change with transition
         d3.select('#myYear').on('input.map', function () {

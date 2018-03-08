@@ -2,10 +2,10 @@ h1 {
     display: flex;
     justify-content: center;
     font-family: Calibri;
-    font-size: 68;
+    font-size: 52;
     align-items: center;
     font-weight: bold;
-    padding-top: 50;
+    padding-top: 10;
 }
 
 #page-wrap {
@@ -20,6 +20,7 @@ h1 {
     display: flex;
     align-items: center;
     flex-direction: column;
+    flex-basis: 100%;
     background-color: #404040;
     color: white;
     padding: 40;
@@ -35,19 +36,23 @@ h1 {
     width: 100vw
 }
 h2 {
+    display: flex;
     font-family:'Calibri';
     font-size: 32;
+    padding: 0;
+    font-size: 1vw;
 }
 
 p {
+    display: flex;
     font-family: 'Calibri';
-    font-size: 24;
+    font-size: 16px;
+    font-size: 1vw;
 }
 
 a {
-	color: yellow;
-	font-family: 'Calibri';
-	font-size: 22;
+    display: flex;
+    color: yellow;
 }
 
 br {
@@ -60,7 +65,7 @@ h3 {
 }
 .radio-css-label {
     font-family: 'Calibri';
-    font-size: 22;
+    font-size: 18px;
 }
 .slider-css-label {
     font-family: 'Calibri';
@@ -74,21 +79,21 @@ h3 {
 
 .bar-x-axis-label {
     font-family: 'Calibri';
-    font-size: 18;
+    font-size: 24;
 }
 
 .line-legend-text {
     font-family: 'Calibri';
-    font-size: 20;
+    font-size: 14px;
 }
 
 #options-header {
     text-align: center;
-    font-size: 24;
+    font-size: 20px;
 }
 
 .bar-title {
-    font-size: 24;
+    font-size: 24px;
 }
 
 /*#bar-holder {
@@ -103,10 +108,10 @@ h3 {
    align-self: flex-end;
 }
 
-/*#line-holder {
-    position: absolute;
-    top: 520;
-}*/
+#line-holder {
+    display: flex;
+    flex-direction: row;
+}
 
 #selections {
     display: flex;
@@ -118,10 +123,6 @@ h3 {
     position: absolute;
     top: 590;
     margin-left: 110
-}
-
-.map-title {
-    font-size: 32;
 }
 
 #first-level {
@@ -138,4 +139,28 @@ h3 {
     align-items: flex-start;
     justify-content: center;
     height: 35%;
+}
+
+.legendTitle {
+    font-size: 18;
+    font-family: 'Calibri';
+}
+
+.legend-entries {
+    display: flex;
+    flex-direction: column;
+}
+
+.line-svg {
+    display: flex;
+    justify-content: center;
+}
+
+/*.y-axis-bar .tick {
+    display: none;
+}*/
+
+.title-line {
+    font-size: 28;
+    font-family: Calibri;
 }
