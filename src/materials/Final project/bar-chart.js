@@ -1,13 +1,13 @@
 function buildChart(containerId) {
     // size globals
-    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width / 2;
+    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width / 2.5;
     var height = d3.select(containerId).node().parentNode.getBoundingClientRect().height;
 
     var margin = {
-        top: 100,
+        top: 50,
         right: 50,
-        bottom: 100,
-        left: 200
+        bottom: 50,
+        left: 50
     };
 
     // calculate dimensions without margins
@@ -22,7 +22,7 @@ function buildChart(containerId) {
         .attr('width', width);
 
     // create inner group element
-    var barChart = svg
+    var g = svg
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -105,28 +105,25 @@ function buildChart(containerId) {
         // axes
         var xAxis = d3.axisBottom(x);
 
-        barChart
+        g
             .append('g')
             .attr('class', 'x-axis')
             .attr('transform', 'translate(0,' + innerHeight + ')')
             .call(xAxis);
 
-        barChart
-            .call(xAxis)
-
         var yAxis = d3.axisLeft(y).ticks(15);
 
-        barChart
+        g
             .enter()
             .append('g')
             .attr('class', 'y-axis')
             .call(yAxis);
 
-        barChart
+        g
             .call(yAxis)
 
         // bars
-       var bars = barChart
+       var bars = g
             .selectAll('.bar')
             .data(barData)
 
@@ -196,11 +193,11 @@ function buildChart(containerId) {
            .attr('stroke', 'grey');
 
         // axis labels
-        var barxAxis = barChart.selectAll('.x-axis-label');
+        //var barxAxis = g.selectAll('.x-axis-label');
 
-        barxAxis
-           .enter()
-           .append('text')
+        g
+            .enter()
+            .append('text')
             .attr('class', 'bar-x-axis-label')
             .attr('x', innerWidth / 2)
             .attr('y', innerHeight + 30)
@@ -208,12 +205,10 @@ function buildChart(containerId) {
             .attr('dominant-baseline', 'hanging')
             .style('font-family', 'Calibri')
             .style('font-size', 26)
-               .text('log[Blood Lead Level (ug/dl)]');
+            .text('log[Blood Lead Level (ug/dl)]');
 
-        barxAxis
-           .text('log[Blood Lead Level (ug/dl)]');
+        var baryAxis = g.selectAll('.y-axis-label');
 
-        var baryAxis = barChart.selectAll('.y-axis-label');
         baryAxis
             .enter()
             .append('text')
@@ -234,7 +229,7 @@ function buildChart(containerId) {
         // title
         var barTitle = '% of Children with Specific BLL in ' + selectedYear;
         
-        var myBartitle = barChart.selectAll('.bar-title').data([barTitle]);
+        var myBartitle = g.selectAll('.bar-title').data([barTitle]);
         
         myBartitle
             .enter()    
@@ -260,16 +255,6 @@ function buildChart(containerId) {
         function updateYear(selectedYear) {
             drawBar(BLL, selectedYear);
         }
-
-        //function mousemove() {
-        //    var x0 = x.invert(d3.mouse(this)[0]),
-        //        i = bisectDate(data, x0, 1),
-        //        d0 = data[i - 1],
-        //        d1 = data[i],
-        //        d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-        //    focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-        //    focus.select("text").text(formatCurrency(d.close));
-        //}
     }
 }
 

@@ -1,6 +1,6 @@
 function buildChart(containerId) {
     // size globals
-    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width * 0.8;
+    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width * 0.75;
     var height = d3.select(containerId).node().parentNode.getBoundingClientRect().height;
 
     var margin = {
@@ -50,7 +50,7 @@ function buildChart(containerId) {
                 return {
                     year: String(d.Year),
                     state: String(d.State),
-                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 5 to 9': parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
                     BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
                     BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
                     BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
@@ -60,18 +60,19 @@ function buildChart(containerId) {
                 };
 
             });
-        new_data.columns = ['year', 'state', 'BLL5_9', 'BLL10_14', 'BLL15_19', 'BLL20_24', 'BLL25_44', 'BLL45_69', 'BLL70']
+        new_data.columns = ['year', 'state', 'BLL 5 to 9', 'BLL10_14', 'BLL15_19', 'BLL20_24', 'BLL25_44', 'BLL45_69', 'BLL70']
         return new_data
     }
 
     function drawLine(BLL, selectedState) {
 
         var parseTime = d3.timeParse('%Y');
-        console.log(parseTime);
 
         BLL.forEach(function(d) {
             d.year = parseTime(d.year);
         });
+
+        console.log(BLL, 'parsed data');
 
         var filteredData = BLL.filter(function(d) {
             return d.state == selectedState;
@@ -180,7 +181,6 @@ function buildChart(containerId) {
         var groups = g
             .selectAll('.path')
             .data(by_BLL_type)
-            
 
         groups
             .enter()    
@@ -209,29 +209,7 @@ function buildChart(containerId) {
             .attr('d', function (d) {
                 return line(d.values);
             });
-
-        // groups
-        //    .selectAll('.year-point')
-        //    .data(function (d) {
-        //     return d;
-        //     })
-        //    .enter()
-        //    .append('circle')
-        //    .attr('class', 'year-point')
-        //    .attr('fill', function (d) {
-        //     return colors(d.id);
-        //     })
-        //    .attr('stroke', 'none')
-        //    .attr('cx', function(d) {
-        //        return x(d.year);
-        //    })
-        //    .attr('cy', function(d) {
-        //        return y(d.values[1]);
-        //    })
-        //    .attr('r', 2);
-
-        // axis labels
-        var xAxistitle = d3.selectAll('.x-axis-label')
+        var xAxistitle = g.selectAll('.x-axis-label')
         
         xAxistitle
             .enter()
@@ -245,10 +223,12 @@ function buildChart(containerId) {
             .style('font-size', 26)
             .text('Year');
         
-            xAxistitle
+        xAxistitle
             .text('Year')
         
-        g
+        var yAxistitle = g.selectAll('.x-axis-label')
+        
+        yAxistitle
             .append('text')
             .attr('class', 'y-axis-label')
             .attr('x', -30)
@@ -259,11 +239,14 @@ function buildChart(containerId) {
             .style('font-family', 'Calibri')
             .style('font-size', 26)
             .text('% of Children Tested in US');
+        
+        yAxistitle
+            .text('% of Children Tested in US')
 
         // title
         var chartTitle = 'Percent of Children with Specific BLL in ' + selectedState;
 
-        var title = d3.selectAll('.title').data([chartTitle]);
+        var title = g.selectAll('.title').data([chartTitle]);
 
         title
             .append('text')
@@ -286,13 +269,14 @@ function buildChart(containerId) {
     }
 
     console.log(legendData, 'legend data');
-
+        
+        var legendPosition = innerWidth - margin.right;
         legendGroups = g.selectAll('.legend-entries')
                 .data(legendData)
                 .enter()
                 .append('g')
                 .attr('transform', function(d, i) {
-                    return 'translate(1140,' + (80 + 40*i) + ')';
+                    return 'translate(' + legendPosition+ ',' + (10 + 40*i) + ')';
                 });
 
         legendGroups.append('circle')
@@ -314,13 +298,9 @@ function buildChart(containerId) {
             });
 
         //programmatically change with transition
-        d3.select('#dropdown').on('change', function () {
-            updateState(+this.value);
+        d3.select('#dropdown').on('input', function () {
+            drawLine(BLL, this.value);
         });
-
-        function updateState(state) {
-            drawLine(BLL, state);
-        }
     }
 }
 

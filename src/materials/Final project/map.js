@@ -1,13 +1,13 @@
 function buildMap(containerId) {
     // size globals
-    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width / 2;
+    var width = d3.select(containerId).node().parentNode.getBoundingClientRect().width / 1.9;
     var height = d3.select(containerId).node().parentNode.getBoundingClientRect().height;
 
     var margin = {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 20
+        left: 50
     };
 
     // calculate dimensions without margins
@@ -18,6 +18,7 @@ function buildMap(containerId) {
     var svg = d3
         .select(containerId)
         .append('svg')
+        .attr('class', 'map-svg')
         .attr('height', height)
         .attr('width', width);
 
@@ -42,7 +43,7 @@ function buildMap(containerId) {
             console.log(data, 'raw data');
                 
                 BLL = cleanData(data);
-                console.log(BLL, 'clean data');
+                console.log(BLL, 'clean map data');
 
                 geojson.features.forEach(function (f) {
                     f.properties.data = {}
@@ -97,7 +98,7 @@ function buildMap(containerId) {
 
         console.log(geojson, 'geojson test');
 
-        var albersProj = d3.geoAlbersUsa().scale(innerWidth*1.2).translate([innerWidth / 2, innerHeight / 2]);
+        var albersProj = d3.geoAlbersUsa().scale(innerWidth*1.1).translate([innerWidth / 2, innerHeight / 2]);
         var geoPath = d3.geoPath().projection(albersProj);
 
         //var selectedBLL = 'BLL5_9';
@@ -105,6 +106,12 @@ function buildMap(containerId) {
             return d.year == selectedYear;
         });
         console.log(filteredData, 'filtered data');
+
+        BLL.forEach(function(d) {
+            if (d[selectedBLL] == 0) {
+                d[selectedBLL] = NaN;
+            }
+        });
 
         var colorScale = d3
             .scaleLog()
@@ -153,12 +160,11 @@ function buildMap(containerId) {
             .append('text')
             .attr('class', 'map-title')
             .attr('x', innerWidth / 2)
-            .attr('y', 20)
+            .attr('y', -10)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
-            .style('font-size', 48)
-            .style('font-weight', 'bold')
+            .style('font-size', 42)
             .text(mapTitle);
 
         title
@@ -225,9 +231,8 @@ function buildMap(containerId) {
 
         //programmatically change with transition
         d3.select('#myYear').on('input.map', function () {
-            var myYear = this.value;
-            d3.select("#myYear-label").text(myYear);
-            draw(geojson, BLL, myYear, selectedBLL);
+            d3.select("#myYear-label").text(this.value);
+            draw(geojson, BLL, this.value, selectedBLL);
         });
 
         d3.selectAll('.radio-css').on('change', function () {

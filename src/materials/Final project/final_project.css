@@ -2,8 +2,10 @@ h1 {
     display: flex;
     justify-content: center;
     font-family: Calibri;
-    font-size: 36;
+    font-size: 68;
     align-items: center;
+    font-weight: bold;
+    padding-top: 50;
 }
 
 #page-wrap {
@@ -15,7 +17,9 @@ h1 {
 #sidebar {
     width: 20%;
     height: 90%;
-    /*position: absolute;*/
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     background-color: #404040;
     color: white;
     padding: 40;
@@ -32,18 +36,18 @@ h1 {
 }
 h2 {
     font-family:'Calibri';
-    font-size: 28;
+    font-size: 32;
 }
 
 p {
     font-family: 'Calibri';
-    font-size: 18;
+    font-size: 24;
 }
 
 a {
 	color: yellow;
 	font-family: 'Calibri';
-	font-size: 18;
+	font-size: 22;
 }
 
 br {
@@ -56,11 +60,11 @@ h3 {
 }
 .radio-css-label {
     font-family: 'Calibri';
-    font-size: 18;
+    font-size: 22;
 }
 .slider-css-label {
     font-family: 'Calibri';
-    font-size: 20;
+    font-size: 22;
 }
 
 .bar-y-axis-label {
@@ -78,15 +82,9 @@ h3 {
     font-size: 20;
 }
 
-#selections {
-    margin-left: 860;
-    top: 150;
-    position: absolute;
-}
-
 #options-header {
     text-align: center;
-    font-size: 18;
+    font-size: 24;
 }
 
 .bar-title {
@@ -100,15 +98,21 @@ h3 {
     top: 10;
 }*/
 
-/*#map-holder {
-   position: absolute;
-   top: 20;
-}*/
+.map-svg {
+   display: flex;
+   align-self: flex-end;
+}
 
 /*#line-holder {
     position: absolute;
     top: 520;
 }*/
+
+#selections {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
 
 #dropdown {
     position: absolute;
@@ -126,12 +130,12 @@ h3 {
     justify-content: space-between;
     flex-basis: 100%;
     align-items: stretch;
-    height: 45%;
+    height: 50%;
 }
 
 #second-level {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
-    height: 45%;
+    justify-content: center;
+    height: 35%;
 }
