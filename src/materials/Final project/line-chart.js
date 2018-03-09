@@ -254,10 +254,10 @@ function buildChart(containerId) {
             .attr('dominant-baseline', 'baseline')
             .style('font-family', 'Calibri')
             .style('font-size', 18)
-            .text('% of Children Tested in US');
+            .text('% of Children Tested in State');
         
         yAxistitle
-            .text('% of Children Tested in US')
+            .text('% of Children Tested in State')
 
         // title
         var chartTitle = 'Percent of Children with Specific BLL in ' + selectedState;
