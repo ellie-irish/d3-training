@@ -218,8 +218,8 @@ function buildMap(containerId) {
             .enter()
             .append("text")
             .attr("class", "legendTitle")
-            .attr("x", 0)
-            .attr("y", innerHeight/2)
+            .attr("x", -20)
+            .attr("y", innerHeight/2 - 10)
             .attr('fill', 'black')
             .attr('transform', 'rotate(-90, ' + (margin.left - 40) + ',' + innerHeight / 1.8 + ')')
             .text("log(% of Tested Children)");
@@ -238,7 +238,7 @@ function buildMap(containerId) {
         //Define x-axis
         var xLegendAxis = d3.axisLeft()
            .ticks(5)
-           .tickFormat(d3.format("d"))  //Set rough # of ticks
+           .tickFormat(d3.format(".2f"))  //Set rough # of ticks
            .scale(xLegendScale);
 
         var legendAxis = g
