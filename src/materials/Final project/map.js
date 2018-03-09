@@ -55,7 +55,7 @@ function buildMap(containerId) {
                 });
                 console.log(geojson, 'new geojson');
 
-                draw(geojson, BLL, '2014', 'BLL5_9');
+                draw(geojson, BLL, '2014', 'BLL 5 to 9');
             });
 
         });
@@ -80,13 +80,13 @@ function buildMap(containerId) {
                     greater5: parseInt(d['Total greater or equal to 5'].replace(/,/g, '')),
                     greater10: parseInt(d['Total greater or equal to 10'].replace(/,/g, '')),
                     perGreater10: parseFloat(d['% greater or equal to 10']),
-                    BLL5_9: parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL10_14: parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL15_19: parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL20_24: parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL25_44: parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL45_69: parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
-                    BLL70: parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
+                    'BLL 5 to 9': parseInt(d['BLL 5 to 9'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 10 to 14': parseInt(d['BLL 10 to 14'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 15 to 19': parseInt(d['BLL 15 to 19'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 20 to 24': parseInt(d['BLL 20 to 24'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 25 to 44': parseInt(d['BLL 25 to 44'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL 45 to 69': parseInt(d['BLL 45 to 69'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100,
+                    'BLL > 70': parseInt(d['BLL greater or equal to 70'].replace(/,/g, '')) / parseInt(d['# of Children Tested'].replace(/,/g, '')) * 100
                 };
             });
     }
@@ -124,7 +124,7 @@ function buildMap(containerId) {
         // map outline
         var paths = g
             .selectAll('.map-draw')
-            .data(geojson.features)
+            .data(geojson.features);
 
         paths
             .enter()
@@ -150,7 +150,6 @@ function buildMap(containerId) {
             .style('stroke', 'black')
             .style('stroke-width', 0.5);
 
-
         // map title
         var mapTitle = 'US Children Blood Lead Levels in ' + selectedYear;
         
@@ -174,7 +173,7 @@ function buildMap(containerId) {
         //// Add legend
 
         //Append a defs (for definition) element to your SVG
-        var defs = svg.append("defs");
+        var defs = g.append("defs");
 
         //Append a linearGradient element to the defs and give it a unique id
         var linearGradient = defs.append("linearGradient")
@@ -198,47 +197,69 @@ function buildMap(containerId) {
         var legendWidth = 20;
         var legendHeight = innerHeight * 0.7;
 
-        //Color Legend container
-        var legendsvg = svg.append("g")
+        // //Color Legend container
+        var legendsvg = g.append("g")
             .attr("class", "legendWrapper")
             .attr("transform", "translate(" + (margin.left - 20) + "," + (innerHeight / 3) + ")");
 
         //Draw the Rectangle
-        legendsvg.append("rect")
+        g.append("rect")
             .attr("class", "legendRect")
-            .attr("x", margin.left - 10)
-            .attr("y", 0)
-            .attr("width", legendWidth)
+            .attr("width", 20)
             .attr("height", legendHeight)
+            .attr("transform", "translate(" + (legendWidth) + ", 10)")
             .style("fill", "url(#linear-gradient)")
-            .style('stroke', 'black');
+            .attr('stroke', 'black');
 
         //Append title
+        var legendTitle = g.selectAll('.legendTitle').data([1]);
 
-        legendsvg.append("text")
+        legendTitle
+            .enter()
+            .append("text")
             .attr("class", "legendTitle")
             .attr("x", 0)
             .attr("y", innerHeight/2)
-            .attr('transform', 'rotate(-90, ' + (margin.left - 20) + ',' + innerHeight / 1.8 + ')')
+            .attr('fill', 'black')
+            .attr('transform', 'rotate(-90, ' + (margin.left - 40) + ',' + innerHeight / 1.8 + ')')
+            .text("log(% of Tested Children)");
+
+        legendTitle
             .text("% of Tested Children");
 
-        legendsvg
-            .text("% of Tested Children");
+        //Set scale for x-axis
+        var xLegendScale = d3
+           .scaleLog()
+           .range([0, innerHeight*0.7])
+           .domain(d3.extent(filteredData, function (d) {
+               return d[selectedBLL];
+           }));
+        
+        //Define x-axis
+        var xLegendAxis = d3.axisLeft()
+           .ticks(5)
+           .tickFormat(d3.format("d"))  //Set rough # of ticks
+           .scale(xLegendScale);
 
-        ////Set scale for x-axis
-        //var xLegendScale = d3.scaleLog()
-        //    .range([0, legendWidth])
-        //    .domain([0, 100]);
+        var legendAxis = g
+            .selectAll('.axis')
+            .data([1]);
 
-        ////Define x-axis
-        //var xLegendAxis = d3.axisLeft()
-        //    .ticks(5)  //Set rough # of ticks
-        //    .scale(xLegendScale);
+        legendAxis
+            .enter()
+            .append('g')
+            .attr('class', 'axis')
+            .attr("transform", "translate(18, 7)")
+            .call(xLegendAxis);
 
-        ////Set up X axis
-        //legendsvg.append("g")
+        legendAxis
+            .call(xLegendAxis);
+
+        //Set up X axis
+
+        // legendsvg.append("g")
         //    .attr("class", "axis")  //Assign "axis" class
-        //    .attr("transform", "translate(" + (-legendWidth / 2) + "," + (10 + legendHeight) + ")")
+        //    .attr("transform", "translate(" + (-legendWidth / 2) + "," + (-legendHeight/2) + ")")
         //    .call(xLegendAxis);
 
         //programmatically change with transition

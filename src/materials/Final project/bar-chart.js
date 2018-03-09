@@ -76,6 +76,11 @@ function buildChart(containerId) {
             return d.key.substr(0, 3) == 'BLL';
         })
 
+        barData.forEach(function(d) {
+            if (isNaN(d.value)) {
+                d.value = 0;
+            }
+        });
         console.log(barData, 'filtered bar data');
 
         // scales
