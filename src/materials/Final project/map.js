@@ -225,7 +225,7 @@ function buildMap(containerId) {
             .text("log(% of Tested Children)");
 
         legendTitle
-            .text("% of Tested Children");
+            .text("log(% of Tested Children)");
 
         //Set scale for x-axis
         var xLegendScale = d3

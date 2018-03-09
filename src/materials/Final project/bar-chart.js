@@ -220,7 +220,7 @@ function buildChart(containerId) {
             .attr('fill', 'black')
             .style('font-family', 'Calibri')
             .style('font-size', 18)
-            .text('log[Blood Lead Level (ug/dl)]');
+            .text('Blood Lead Level (ug/dl)');
 
 
         var baryAxis = g.selectAll('.y-axis-bar-label').data([1]);
@@ -243,7 +243,7 @@ function buildChart(containerId) {
             
 
         // title
-        var barTitle = '% of Children with Specific BLL in ' + selectedYear;
+        var barTitle = 'Percent of Children with Specific BLL in ' + selectedYear;
         
         var myBartitle = g.selectAll('.bar-title').data([barTitle]);
         
